@@ -1,0 +1,6 @@
+# Minimal requirements inferred from chess_board.py
+# Run `pip install -r requirements.txt` after activating your venv
+fastapi
+uvicorn[standard]
+python-chess
+
