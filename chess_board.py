@@ -86,5 +86,7 @@ async def websocket_endpoint(ws: WebSocket):
         while True:
             # receive pings from client or ignore; server pushes updates after moves
             await ws.receive_text()
-    except WebSocketDisconnect:
-        clients.remove(ws)
+    finally:
+        clients.discard(ws)
+    # removes client on disconnect related to network errors or runtime errors inside the loop
+    

@@ -25,7 +25,10 @@ def get_user_move():
                 return move
             else:
                 print("Invalid move. Please try again.")
-        except:
+        except KeyboardInterrupt:
+            print("\nGame interrupted by user.")
+            raise
+        except Exception:
             print("Invalid move format. Please use UCI format (e.g., e2e4).")
 
 def get_ai_move():
@@ -33,21 +36,24 @@ def get_ai_move():
 
 def game_loop():
     render()
-    while not board.is_game_over():
-        if board.turn == chess.WHITE:
-            print("White's turn")
-            user_move = get_user_move()
-            board.push(user_move)
-            render()
-        else:
-            print("Black's turn")
-            ai_move = get_ai_move()
-            print(f"AI plays: {ai_move.uci()}")
-            board.push(ai_move)
-            render()
+    try:
+        while not board.is_game_over():
+            if board.turn == chess.WHITE:
+                print("White's turn")
+                user_move = get_user_move()
+                board.push(user_move)
+                render()
+            else:
+                print("Black's turn")
+                ai_move = get_ai_move()
+                print(f"AI plays: {ai_move.uci()}")
+                board.push(ai_move)
+                render()
 
-    print("Game over.")
-    print(f"Result: {board.result()}")
+        print("Game over.")
+        print(f"Result: {board.result()}")
+    except KeyboardInterrupt:
+        print("\nExiting game. Thanks for playing!")
 
 if __name__ == "__main__":
     game_loop()
