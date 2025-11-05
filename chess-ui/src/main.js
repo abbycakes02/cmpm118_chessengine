@@ -1,6 +1,7 @@
 import './style.css';
 
 import { Chessground } from '@lichess-org/chessground';  
+import { Chess, SQUARES } from 'chess.js';
 
 let playerColor = 'white';
 const board = document.getElementById('board');
@@ -10,18 +11,33 @@ const btnWhite = document.getElementById('play-white');
 const btnAIvsAI = document.getElementById('ai-vs-ai');
 
 // ========== Initialize Chessground Board ==========
+const game = new Chess();
+window.game = game; // expose game for debugging
+
+function computeDests() {
+  // compute all possible destinations for each piece
+  const dests = new Map();
+  for (const s of SQUARES) {
+    const moves = game.moves({ square: s, verbose: true });
+    if (moves.length) dests.set(s, moves.map((m) => m.to));
+  }
+  return dests;
+}
+
 const ground = Chessground(board, {
-  fen: 'start',
+  fen: game.fen(),
   orientation: playerColor,
   coordinates: true,
   movable: {
-    free: true, // allow ALL moves
+    free: false, // disable free moves
     color: playerColor,
+    dests: computeDests(),
     events: {
       after: handleMove,
     },
   },
 });
+window.ground = ground; // expose ground for debugging
 
 
 // ========== Click Handlers for buttons ==========
@@ -71,19 +87,55 @@ async function sendMove(fen, move) {
 }
 
 async function handleMove(orig, dest) {
-  const move = orig + dest;
-  const fen = ground.getFen();
-  console.log(`Player moved: ${move} in position ${fen}`);
-  await sendMove(fen, move);
+  console.log(`Handling move from ${orig} to ${dest}`);
 
-  refreshBoard();
+  const fenBefore = game.fen();
+
+  const moveObj = game.move({ from: orig, to: dest, promotion: 'q' });
+
+  if (moveObj === null) {
+    console.log('Illegal move attempted');
+    refreshBoard();
+    return;
+  }
+
+
+  const move = `${orig}${dest}`;
+  console.log(`send move ${move}`);
+
+  const response = await sendMove(fenBefore, move);
+
+  if (response.engine_move) {
+    console.log(`Engine move received: ${response.engine_move}`);
+
+    game.move({
+      from: response.engine_move.slice(0, 2),
+      to: response.engine_move.slice(2, 4),
+      promotion: 'q'
+    });
+    const fenAfter = game.fen();
+    console.log(`Position after player move: ${fenAfter}`);
+  }
+
+  // --- after syncing board FEN ---
+  if (response?.fen) {
+    game.load(response.fen);
+    ground.set({ fen: response.fen });
+  }
+
+  // Defer the movable-refresh until the next frame
+  requestAnimationFrame(() => refreshBoard());
 }
 
 function refreshBoard() {
+  console.log('Refreshing board');
+  const destinations = computeDests();
+  console.log('Computed destinations:', destinations);
   ground.set({
     movable: {
-      free: true, // allow all moves (no validation)
-      color: 'both', // piece color player can move
+      free: false,
+      color: game.turn() === 'w' ? 'white' : 'black', // piece color player can move
+      dests: destinations,
       events: {
         after: handleMove,
       }

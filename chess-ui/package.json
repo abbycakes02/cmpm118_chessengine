@@ -12,6 +12,7 @@
     "vite": "^7.1.7"
   },
   "dependencies": {
-    "@lichess-org/chessground": "^9.8.5"
+    "@lichess-org/chessground": "^9.8.5",
+    "chess.js": "^1.4.0"
   }
 }
