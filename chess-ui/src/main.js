@@ -107,24 +107,12 @@ async function handleMove(orig, dest) {
 
   if (response.engine_move) {
     console.log(`Engine move received: ${response.engine_move}`);
-
-    game.move({
-      from: response.engine_move.slice(0, 2),
-      to: response.engine_move.slice(2, 4),
-      promotion: 'q'
-    });
-    const fenAfter = game.fen();
-    console.log(`Position after player move: ${fenAfter}`);
+    if (response?.fen) {
+      game.load(response.fen);
+      ground.set({ fen: response.fen });
+    }
+    requestAnimationFrame(() => refreshBoard());
   }
-
-  // --- after syncing board FEN ---
-  if (response?.fen) {
-    game.load(response.fen);
-    ground.set({ fen: response.fen });
-  }
-
-  // Defer the movable-refresh until the next frame
-  requestAnimationFrame(() => refreshBoard());
 }
 
 function refreshBoard() {
