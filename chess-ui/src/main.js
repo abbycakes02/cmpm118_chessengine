@@ -4,13 +4,18 @@ import { Chessground } from '@lichess-org/chessground';
 
 let playerColor = 'white';
 const board = document.getElementById('board');
+
+// ========== Initialize Chessground Board ==========
 const ground = Chessground(board, {
   fen: 'start',
   orientation: playerColor,
   coordinates: true,
   movable: {
-    free: false,
-    color:playerColor
+    free: true, // allow ALL moves
+    color: playerColor,
+    events: {
+      after: handleMove,
+    },
   },
 });
 
@@ -53,6 +58,7 @@ btnAIvsAI.addEventListener('click', () => {
 
 // async function that calls the backend engine endpoint
 async function sendMove(fen, move) {
+  console.log(`Sending move ${move} for position ${fen} to backend engine`);
   const response = await fetch('http://localhost:8000/move', {
     method: 'POST',
     headers: {
@@ -65,19 +71,22 @@ async function sendMove(fen, move) {
   return data;
 }
 
-ground.set({
-  movable:{
-    color: playerColor, // piece color player can move
-    free: false, // restrict moves to legal moves
-    events: {
-      after: async (orig, dest) => {
-        const move = orig + dest;
-        const fen = ground.getFen();
-        sendMove(fen, move);
+async function handleMove(orig, dest) {
+  const move = orig + dest;
+  const fen = ground.getFen();
+  console.log(`Player moved: ${move} in position ${fen}`);
+  await sendMove(fen, move);
+
+  ground.set({
+    movable:{
+      color: playerColor, // piece color player can move
+      free: true, // allow all moves (no validation)
+      events: {
+        after: handleMove,
       }
     }
-  }
-});
+  });
+}
 
 
 
