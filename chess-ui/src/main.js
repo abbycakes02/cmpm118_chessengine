@@ -4,6 +4,10 @@ import { Chessground } from '@lichess-org/chessground';
 
 let playerColor = 'white';
 const board = document.getElementById('board');
+// Get Buttons
+const btnBlack = document.getElementById('play-black');
+const btnWhite = document.getElementById('play-white');
+const btnAIvsAI = document.getElementById('ai-vs-ai');
 
 // ========== Initialize Chessground Board ==========
 const ground = Chessground(board, {
@@ -19,11 +23,6 @@ const ground = Chessground(board, {
   },
 });
 
-
-// Get Buttons
-const btnBlack = document.getElementById('play-black');
-const btnWhite = document.getElementById('play-white');
-const btnAIvsAI = document.getElementById('ai-vs-ai');
 
 // ========== Click Handlers for buttons ==========
 btnBlack.addEventListener('click', () => {
@@ -77,10 +76,14 @@ async function handleMove(orig, dest) {
   console.log(`Player moved: ${move} in position ${fen}`);
   await sendMove(fen, move);
 
+  refreshBoard();
+}
+
+function refreshBoard() {
   ground.set({
-    movable:{
-      color: playerColor, // piece color player can move
+    movable: {
       free: true, // allow all moves (no validation)
+      color: 'both', // piece color player can move
       events: {
         after: handleMove,
       }
