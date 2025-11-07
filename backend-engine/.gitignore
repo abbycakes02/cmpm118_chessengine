@@ -12,12 +12,10 @@ dist
 dist-ssr
 *.local
 
-# python
-*.pyc
-__pycache__/
-env/
+# Python virtual environments
 venv/
-.env/
+.venv/
+env/
 
 # Editor directories and files
 .vscode/*
