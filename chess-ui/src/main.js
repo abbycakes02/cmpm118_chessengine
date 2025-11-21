@@ -1,149 +1,154 @@
 import './style.css';
-
-import { Chessground } from '@lichess-org/chessground';  
+import { Chessground } from '@lichess-org/chessground';
 import { Chess, SQUARES } from 'chess.js';
 
-let playerColor = 'white';
-const board = document.getElementById('board');
-// Get Buttons
-const btnBlack = document.getElementById('play-black');
-const btnWhite = document.getElementById('play-white');
-const btnAIvsAI = document.getElementById('ai-vs-ai');
-
-// ========== Initialize Chessground Board ==========
+// Init
 const game = new Chess();
-window.game = game; // expose game for debugging
+let playerColor = 'white'; 
+const boardElement = document.getElementById('board');
+const statusElement = document.getElementById('status');
+
+// Overlay Elements
+const overlay = document.getElementById('game-overlay');
+const winnerText = document.getElementById('winner-text');
+const rematchBtn = document.getElementById('overlay-rematch');
 
 function computeDests() {
-  // compute all possible destinations for each piece
-  const dests = new Map();
-  for (const s of SQUARES) {
-    const moves = game.moves({ square: s, verbose: true });
-    if (moves.length) dests.set(s, moves.map((m) => m.to));
-  }
-  return dests;
+    const dests = new Map();
+    SQUARES.forEach(s => {
+        const ms = game.moves({ square: s, verbose: true });
+        if (ms.length) dests.set(s, ms.map(m => m.to));
+    });
+    return dests;
 }
 
-const ground = Chessground(board, {
-  fen: game.fen(),
-  orientation: playerColor,
-  coordinates: true,
-  movable: {
-    free: false, // disable free moves
-    color: playerColor,
-    dests: computeDests(),
-    events: {
-      after: handleMove,
+// === Status & Overlay Logic ===
+function updateStatus() {
+    // Check Game Over
+    if (game.isGameOver()) {
+        let title = '';
+        
+        if (game.isCheckmate()) {
+            const winner = game.turn() === 'w' ? 'Black' : 'White';
+            title = `${winner} Wins!`;
+        } else if (game.isDraw()) {
+            title = 'Draw';
+        } else {
+            title = 'Game Over';
+        }
+
+        // Show Overlay
+        winnerText.innerText = title;
+        overlay.classList.remove('hidden');
+        statusElement.innerText = "Game Over";
+    } else {
+        // Hide Overlay
+        overlay.classList.add('hidden');
+        
+        // Update Text Status
+        let text = (game.turn() === 'w' ? "White's" : "Black's") + " turn";
+        if (game.isCheck()) text += " (Check!)";
+        statusElement.innerText = text;
+    }
+}
+
+// Board Init
+const ground = Chessground(boardElement, {
+    fen: game.fen(),
+    orientation: playerColor,
+    coordinates: true,
+    movable: {
+        color: 'white',
+        free: false,
+        dests: computeDests(),
+        events: { after: onPlayerMove }, 
     },
-  },
 });
-window.ground = ground; // expose ground for debugging
 
+updateStatus();
 
-// ========== Click Handlers for buttons ==========
-btnBlack.addEventListener('click', () => {
-  console.log('Play as Black');
-  playerColor = 'black';
-  ground.set({
-    fen: 'start',
-    orientation: 'black',
-    movable: {
-      color: 'black',
+// === Logic ===
+
+async function onPlayerMove(orig, dest) {
+    game.move({ from: orig, to: dest, promotion: 'q' }); 
+    updateStatus(); // Check for immediate win
+
+    if (game.isGameOver()) {
+        ground.set({ movable: { color: null } }); 
+        return;
     }
-  });
-});
 
-btnWhite.addEventListener('click', () => {
-  console.log('Play as White');
-  playerColor = 'white';
-  ground.set({
-    fen: 'start',
-    orientation: 'white',
-    movable: {
-      color: 'white'    
-    }
-  });
-});
-
-btnAIvsAI.addEventListener('click', () => {
-  console.log('Engine vs Engine mode!');
-})
-
-// ========== Connecting the UI to the backend engine ==========
-
-// async function that calls the backend engine endpoint
-async function sendMove(fen, move) {
-  console.log(`Sending move ${move} for position ${fen} to backend engine`);
-  const response = await fetch('http://localhost:8000/move', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ fen, move }),
-  });
-  const data = await response.json();
-  console.log(data);
-  return data;
+    // Lock board
+    ground.set({ movable: { color: null } });
+    
+    await makeEngineMove();
 }
 
-async function handleMove(orig, dest) {
-  console.log(`Handling move from ${orig} to ${dest}`);
+async function makeEngineMove() {
+    try {
+        const data = await sendMoveToBackend(game.fen());
+        const engineMove = data.move; 
+        
+        if (!engineMove || game.isGameOver()) {
+            updateStatus();
+            return;
+        }
 
-  const fenBefore = game.fen();
+        const fromSquare = engineMove.substring(0, 2);
+        const toSquare = engineMove.substring(2, 4);
+        game.move({ from: fromSquare, to: toSquare, promotion: 'q' });
 
-  const moveObj = game.move({ from: orig, to: dest, promotion: 'q' });
+        ground.set({
+            fen: game.fen(),
+            turnColor: playerColor,
+            movable: {
+                color: playerColor,
+                dests: computeDests()
+            }
+        });
+        
+        updateStatus(); // Check for Engine win
 
-  if (moveObj === null) {
-    console.log('Illegal move attempted');
-    refreshBoard();
-    return;
-  }
-
-
-  const move = `${orig}${dest}`;
-  console.log(`send move ${move}`);
-
-  const response = await sendMove(fenBefore, move);
-
-  if (response.engine_move) {
-    console.log(`Engine move received: ${response.engine_move}`);
-    if (response?.fen) {
-      game.load(response.fen);
-      ground.set({ fen: response.fen });
+    } catch (err) {
+        console.error("Engine failed:", err);
+        // Unlock on error
+        ground.set({ movable: { color: playerColor, dests: computeDests() } });
     }
-    requestAnimationFrame(() => refreshBoard());
-  }
 }
 
-function refreshBoard() {
-  console.log('Refreshing board');
-  const destinations = computeDests();
-  console.log('Computed destinations:', destinations);
-  ground.set({
-    movable: {
-      free: false,
-      color: game.turn() === 'w' ? 'white' : 'black', // piece color player can move
-      dests: destinations,
-      events: {
-        after: handleMove,
-      }
-    }
-  });
+async function sendMoveToBackend(FEN) {
+    const response = await fetch('http://localhost:8000/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ FEN: FEN, engine: "random" }), 
+    });
+    return await response.json();
 }
 
+// === Buttons ===
 
+function resetGame(color) {
+    game.reset();
+    playerColor = color;
+    
+    // Reset Board
+    ground.set({
+        fen: game.fen(),
+        orientation: color,
+        movable: { 
+            color: color === 'white' ? 'white' : null, 
+            dests: computeDests() 
+        }
+    });
+    
+    updateStatus(); // Hides overlay
 
-// Initialize the board with starting position  
-/*const ground = Chessground(document.getElementById('board'), {  
-  fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',  
-  orientation: 'black',  
-  coordinates: true,  
-  movable: {  
-    free: true,  // Allow all moves (no validation)  
-    color: 'both'  // Both sides can move  
-  }  
-});
-*/
+    // If playing Black, trigger Engine to move first
+    if (color === 'black') {
+        makeEngineMove();
+    }
+}
 
-
-
+document.getElementById('play-white').addEventListener('click', () => resetGame('white'));
+document.getElementById('play-black').addEventListener('click', () => resetGame('black'));
+rematchBtn.addEventListener('click', () => resetGame(playerColor));
