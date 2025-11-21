@@ -1,63 +1,50 @@
-
-from fastapi import APIRouter
-from fastapi import Request, HTTPException
-from fastapi.responses import JSONResponse
-
-import json
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from engines import random_engine
 
 
-# Define the FastAPI Router Object
-router = APIRouter(prefix="")
+router = APIRouter()
 
-# Define the request model using Pydantic
+
+# Update Request Model to accept an engine choice
 class MoveRequest(BaseModel):
     FEN: str
-    move: str
+    engine: str = "random"  # Default to random
 
 
-@router.post("/move/random-engine")
-async def random_engine_move(request: Request):
+#  Map of engine names to their functions
+ENGINES = {
+    "random": random_engine.get_random_move,
+}
+
+
+@router.post("/move")
+async def get_move(request: MoveRequest):
     """
-        This endpoint returns a random legal move. This is primarily used for testing, debugging and lols.
-        The engine is implemented in /engines/random_engine.py
-
-        Args:
-            request (MoveRequest): Contains current FEN & played move
-        Returns:
-            
+    Central endpoint that delegates logic to the specific engine requested.
     """
+    # Check if the requested engine exists
+    if request.engine not in ENGINES:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Engine '{request.engine}' not found. Options: {list(ENGINES.keys())}"
+            )
+
+    selected_engine = ENGINES[request.engine]
+
     try:
-        body = await request.json()
+        # Call the engine logic (Pure Python, no HTTP stuff)
+        move_uci = selected_engine(request.FEN)
 
-        board_state = MoveRequest(**request)    # ** unpacks to create `MoveRequest(FEN="..", move="..")`, from request = {"FEN": "..", "move": ".."}
+        return {
+            "move": move_uci,
+            "engine": request.engine
+        }
 
-        board_fen = board_state.FEN
-        move = board_state.move
+    except ValueError as e:
+        # Handle game over or logic errors from the engine
+        return {"move": None, "status": str(e)}
 
-        print("Board FEN:", board_fen)
-        print("move: ", move)
-
-        return
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid JSON")
     except Exception as e:
-        print(f"Error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-    
-
-@router.post("/move/basic_minimax_engine")
-async def minimax_engine_move(request: MoveRequest):
-    """
-        This endpoint 
-        Args: 
-        Returns:
-    """
-    try:        
-        return
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid JSON")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))    
-
+        print(f"Server Error: {e}")
+        raise HTTPException(status_code=500, detail="Internal Engine Error")

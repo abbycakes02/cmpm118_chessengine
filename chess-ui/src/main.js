@@ -1,126 +1,154 @@
 import './style.css';
-
-import { Chessground } from '@lichess-org/chessground';  
+import { Chessground } from '@lichess-org/chessground';
 import { Chess, SQUARES } from 'chess.js';
 
-let playerColor = 'white';
-const board = document.getElementById('board');
-const ground = Chessground(board, {
-    fen: 'start',
+// Init
+const game = new Chess();
+let playerColor = 'white'; 
+const boardElement = document.getElementById('board');
+const statusElement = document.getElementById('status');
+
+// Overlay Elements
+const overlay = document.getElementById('game-overlay');
+const winnerText = document.getElementById('winner-text');
+const rematchBtn = document.getElementById('overlay-rematch');
+
+function computeDests() {
+    const dests = new Map();
+    SQUARES.forEach(s => {
+        const ms = game.moves({ square: s, verbose: true });
+        if (ms.length) dests.set(s, ms.map(m => m.to));
+    });
+    return dests;
+}
+
+// === Status & Overlay Logic ===
+function updateStatus() {
+    // Check Game Over
+    if (game.isGameOver()) {
+        let title = '';
+        
+        if (game.isCheckmate()) {
+            const winner = game.turn() === 'w' ? 'Black' : 'White';
+            title = `${winner} Wins!`;
+        } else if (game.isDraw()) {
+            title = 'Draw';
+        } else {
+            title = 'Game Over';
+        }
+
+        // Show Overlay
+        winnerText.innerText = title;
+        overlay.classList.remove('hidden');
+        statusElement.innerText = "Game Over";
+    } else {
+        // Hide Overlay
+        overlay.classList.add('hidden');
+        
+        // Update Text Status
+        let text = (game.turn() === 'w' ? "White's" : "Black's") + " turn";
+        if (game.isCheck()) text += " (Check!)";
+        statusElement.innerText = text;
+    }
+}
+
+// Board Init
+const ground = Chessground(boardElement, {
+    fen: game.fen(),
     orientation: playerColor,
     coordinates: true,
     movable: {
+        color: 'white',
         free: false,
-        color:playerColor
+        dests: computeDests(),
+        events: { after: onPlayerMove }, 
     },
 });
-// Get Buttons
-const btnBlack = document.getElementById('play-black');
-const btnWhite = document.getElementById('play-white');
-const btnAIvsAI = document.getElementById('ai-vs-ai');
 
-// ========== Initialize Chessground Board ==========
-const game = new Chess();
-window.game = game; // expose game for debugging
+updateStatus();
 
-function computeDests() {
-  // compute all possible destinations for each piece
-  const dests = new Map();
-  for (const s of SQUARES) {
-    const moves = game.moves({ square: s, verbose: true });
-    if (moves.length) dests.set(s, moves.map((m) => m.to));
-  }
-  return dests;
+// === Logic ===
+
+async function onPlayerMove(orig, dest) {
+    game.move({ from: orig, to: dest, promotion: 'q' }); 
+    updateStatus(); // Check for immediate win
+
+    if (game.isGameOver()) {
+        ground.set({ movable: { color: null } }); 
+        return;
+    }
+
+    // Lock board
+    ground.set({ movable: { color: null } });
+    
+    await makeEngineMove();
 }
 
-const ground = Chessground(board, {
-  fen: game.fen(),
-  orientation: playerColor,
-  coordinates: true,
-  movable: {
-    free: false, // disable free moves
-    color: playerColor,
-    dests: computeDests(),
-    events: {
-      after: handleMove,
-    },
-  },
-});
-window.ground = ground; // expose ground for debugging
-
-
-// ========== Click Handlers for buttons ==========
-btnBlack.addEventListener('click', () => {
-    console.log('Play as Black');
-    playerColor = 'black';
-    ground.set({
-        fen: 'start',
-        orientation: 'black',
-        movable: {
-            color: 'black',
+async function makeEngineMove() {
+    try {
+        const data = await sendMoveToBackend(game.fen());
+        const engineMove = data.move; 
+        
+        if (!engineMove || game.isGameOver()) {
+            updateStatus();
+            return;
         }
-    });
-});
 
-btnWhite.addEventListener('click', () => {
-    console.log('Play as White');
-    playerColor = 'white';
-    ground.set({
-        fen: 'start',
-        orientation: 'white',
-        movable: {
-            color: 'white'    
-        }
-    });
-});
+        const fromSquare = engineMove.substring(0, 2);
+        const toSquare = engineMove.substring(2, 4);
+        game.move({ from: fromSquare, to: toSquare, promotion: 'q' });
 
-btnAIvsAI.addEventListener('click', () => {
-    console.log('Engine vs Engine mode!');
-})
+        ground.set({
+            fen: game.fen(),
+            turnColor: playerColor,
+            movable: {
+                color: playerColor,
+                dests: computeDests()
+            }
+        });
+        
+        updateStatus(); // Check for Engine win
 
-// ========== Connecting the UI to the backend engine ==========
+    } catch (err) {
+        console.error("Engine failed:", err);
+        // Unlock on error
+        ground.set({ movable: { color: playerColor, dests: computeDests() } });
+    }
+}
 
-// async function that calls the backend engine endpoint
-async function sendMove(FEN, move) {
+async function sendMoveToBackend(FEN) {
     const response = await fetch('http://localhost:8000/move', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ FEN, move }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ FEN: FEN, engine: "random" }), 
     });
-    const data = await response.json();
-    console.log('Move Returned', data);
-    return data;
+    return await response.json();
 }
 
-ground.set({
-    movable:{
-        color: playerColor, // piece color player can move
-        free: false, // restrict moves to legal moves
-        events: {
-            after: async (orig, dest) => {
-                const move = orig + dest;
-                const fen = ground.getFen();
-                sendMove(fen, move);
-            }
+// === Buttons ===
+
+function resetGame(color) {
+    game.reset();
+    playerColor = color;
+    
+    // Reset Board
+    ground.set({
+        fen: game.fen(),
+        orientation: color,
+        movable: { 
+            color: color === 'white' ? 'white' : null, 
+            dests: computeDests() 
         }
+    });
+    
+    updateStatus(); // Hides overlay
+
+    // If playing Black, trigger Engine to move first
+    if (color === 'black') {
+        makeEngineMove();
     }
-});
+}
 
-
-
-// Initialize the board with starting position  
-/*const ground = Chessground(document.getElementById('board'), {  
-fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',  
-orientation: 'black',  
-coordinates: true,  
-movable: {  
-free: true,  // Allow all moves (no validation)  
-color: 'both'  // Both sides can move  
-}  
-});
-*/
-
-
-
+document.getElementById('play-white').addEventListener('click', () => resetGame('white'));
+document.getElementById('play-black').addEventListener('click', () => resetGame('black'));
+rematchBtn.addEventListener('click', () => resetGame(playerColor));

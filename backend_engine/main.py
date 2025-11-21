@@ -7,14 +7,12 @@
 """
 
 
-
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
 
-from backend_engine.api import routes_engine_access
+from api import routes_engine_access
 
 
 app = FastAPI()
@@ -23,7 +21,7 @@ app = FastAPI()
 # We must hence add CORS middleware, otherwise FastAPI will never receive the request
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
