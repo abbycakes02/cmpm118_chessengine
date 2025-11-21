@@ -74,7 +74,7 @@ npm run dev
 
 Now the front end should be accessible at `http://localhost:5173`.
 
-The Backend Engine server is run by simply running the `main.py` script which starts a uvicorn server at `http://localhost:8000`. 
+The Backend Engine server is run by simply running the `main.py` script which starts a uvicorn server at `http://localhost:8000`.
 
 ```bash
 cd backend_engine
