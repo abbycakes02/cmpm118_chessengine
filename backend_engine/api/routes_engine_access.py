@@ -6,10 +6,10 @@ from engines import random_engine
 router = APIRouter()
 
 
-# Update Request Model to accept an engine choice
+# move request model takes in a FEN string and engine name
 class MoveRequest(BaseModel):
     FEN: str
-    engine: str = "random"  # Default to random
+    engine: str = "random"  # Default to random engine
 
 
 #  Map of engine names to their functions
@@ -21,7 +21,9 @@ ENGINES = {
 @router.post("/move")
 async def get_move(request: MoveRequest):
     """
-    Central endpoint that delegates logic to the specific engine requested.
+    gets a move from the appropriate engine and returns it as UCI string
+    Input: JSON with FEN string and engine name
+    Output: JSON with UCI move string
     """
     # Check if the requested engine exists
     if request.engine not in ENGINES:
