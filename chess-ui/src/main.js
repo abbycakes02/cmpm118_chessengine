@@ -2,17 +2,18 @@ import './style.css';
 import { Chessground } from '@lichess-org/chessground';
 import { Chess, SQUARES } from 'chess.js';
 
-// Init
+// Initialize Game State
 const game = new Chess();
 let playerColor = 'white'; 
 const boardElement = document.getElementById('board');
 const statusElement = document.getElementById('status');
 
-// Overlay Elements
+// Initialize Overlay Elements
 const overlay = document.getElementById('game-overlay');
 const winnerText = document.getElementById('winner-text');
 const rematchBtn = document.getElementById('overlay-rematch');
 
+// helper function to compute possible destinations for each square
 function computeDests() {
     const dests = new Map();
     SQUARES.forEach(s => {
@@ -22,7 +23,7 @@ function computeDests() {
     return dests;
 }
 
-// === Status & Overlay Logic ===
+// helper function to update game status, check for game over, and show overlays
 function updateStatus() {
     // Check Game Over
     if (game.isGameOver()) {
@@ -67,11 +68,11 @@ const ground = Chessground(boardElement, {
 
 updateStatus();
 
-// === Logic ===
+// movement logic
 
 async function onPlayerMove(orig, dest) {
     game.move({ from: orig, to: dest, promotion: 'q' }); 
-    updateStatus(); // Check for immediate win
+    updateStatus(); // after Player moves check for Game Over
 
     if (game.isGameOver()) {
         ground.set({ movable: { color: null } }); 
@@ -80,20 +81,22 @@ async function onPlayerMove(orig, dest) {
 
     // Lock board
     ground.set({ movable: { color: null } });
-    
+
+    // Trigger Engine Move
     await makeEngineMove();
 }
 
 async function makeEngineMove() {
     try {
-        const data = await sendMoveToBackend(game.fen());
-        const engineMove = data.move; 
+        const data = await sendMoveToBackend(game.fen());// Send current FEN to backend
+        const engineMove = data.move;  // get UCI move string from response expecting format like 'e2e4'
         
-        if (!engineMove || game.isGameOver()) {
+        if (!engineMove || game.isGameOver()) { // Safety check
             updateStatus();
             return;
         }
 
+        // Apply Engine Move to Game
         const fromSquare = engineMove.substring(0, 2);
         const toSquare = engineMove.substring(2, 4);
         game.move({ from: fromSquare, to: toSquare, promotion: 'q' });
@@ -125,7 +128,7 @@ async function sendMoveToBackend(FEN) {
     return await response.json();
 }
 
-// === Buttons ===
+// button handlers
 
 function resetGame(color) {
     game.reset();

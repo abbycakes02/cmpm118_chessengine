@@ -1,9 +1,6 @@
 """
-    This script is a single clear entry point.
-
-    1. Creates the FastAPI app object
-    2. Includes the router from /api
-
+Main entry point for the Chess Engine Backend using FastAPI.
+Sets up the FastAPI app, includes CORS middleware, and registers API routes.
 """
 
 

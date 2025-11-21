@@ -1,5 +1,9 @@
 
-# Setup Guide for CMPM 118 Chess Engine Project
+# CMPM 118 Chess Engine Project
+
+This repo contains the techinal implementation of a chess engine for CMPM 118 at UC Santa Cruz. The engine is built using a combination of a neural network value function and a minimax search algorithm. The project is structured into a backend engine that handles the chess logic and a frontend UI for user interaction.
+
+## Project Structure
 
 ```bash
 .
@@ -8,6 +12,12 @@
 │   │   └── routes_engine_access.py
 │   ├── engines
 │   │   └── random_engine.py
+│   ├── data_processing
+│   │   ├── pgn_parser.py
+│   │   └── tensor_converter.py
+│   ├── ml
+│   │   ├── model.py
+│   │   └── train.py
 │   ├── main.py
 │   └── requirements.txt
 ├── chess-ui
@@ -20,16 +30,21 @@
 │       ├── javascript.svg
 │       ├── main.js
 │       └── style.css
+├── data
+│   ├── raw
+│   └── processed
 └── README.md
 ```
 
-## 1. Clone the repository
+## Running the Project
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/abbycakes02/cmpm118_chessengine.git
 ```
 
-## 2. Setting up the frontend
+### 2. Setting up the frontend
 
 Install all the frontend dependencies.
 
@@ -38,7 +53,7 @@ cd chess-ui
 npm install
 ```
 
-## 3. Setting up the backend
+### 3. Setting up the backend
 
 Create a python venv or conda env and install all the requirements.
 
@@ -74,9 +89,33 @@ npm run dev
 
 Now the front end should be accessible at `http://localhost:5173`.
 
-The Backend Engine server is run by simply running the `main.py` script which starts a uvicorn server at `http://localhost:8000`. 
+The Backend Engine server is run by simply running the `main.py` script which starts a uvicorn server at `http://localhost:8000`.
 
 ```bash
 cd backend_engine
 uvicorn main:app --reload
 ```
+
+## Training the Neural Network
+
+### Data and PGN Parsing
+
+The training data is sourced from the Lichess Elite Database, which contains high-quality chess games in PGN format.
+
+[Lichess Elite Database](https://database.lichess.org/#standard_games)
+
+To parse these PGN files into a format suitable for training, use the `pgn_parser.py` script located in `backend_engine/data_processing/`.
+
+download the pgn.zst file but dont decompress it. The zip itself should be 30gb and its 10x the size when decompressed.
+
+Then run the following command to parse the PGN data:
+
+```bash
+# Run from inside the 'backend_engine' folder
+cd backend_engine
+
+# Stream the data directly into the parser
+zstdcat ../data/raw/YOUR_FILE.pgn.zst | python data_processing/pgn_parser.py
+```
+
+This will read the compressed PGN data from standard input, parse each game, and extract board positions along with their outcomes. The parsed data will be saved in chunks as Parquet files in the `data/processed/` directory.

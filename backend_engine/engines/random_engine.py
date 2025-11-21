@@ -4,6 +4,7 @@ import random
 
 def get_random_move(fen: str) -> str:
     """
+    takes the current games state as a FEN and returns a random legal move in UCI format.
     Input: FEN string
     Output: UCI move string (e.g., "e2e4") or None if game over
     """
