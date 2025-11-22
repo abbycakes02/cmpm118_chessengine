@@ -12,6 +12,8 @@ const statusElement = document.getElementById('status');
 const overlay = document.getElementById('game-overlay');
 const winnerText = document.getElementById('winner-text');
 const rematchBtn = document.getElementById('overlay-rematch');
+const engineSelect = document.getElementById('engine-select');
+const engineSpinner = document.getElementById('loader');
 
 // helper function to compute possible destinations for each square
 function computeDests() {
@@ -42,6 +44,7 @@ function updateStatus() {
         winnerText.innerText = title;
         overlay.classList.remove('hidden');
         statusElement.innerText = "Game Over";
+        engineSpinner.classList.add('hidden');
     } else {
         // Hide Overlay
         overlay.classList.add('hidden');
@@ -87,6 +90,10 @@ async function onPlayerMove(orig, dest) {
 }
 
 async function makeEngineMove() {
+    // Show Spinner
+    engineSpinner.classList.remove('hidden');
+    statusElement.innerText = "Engine is thinking...";
+
     try {
         const data = await sendMoveToBackend(game.fen());// Send current FEN to backend
         const engineMove = data.move;  // get UCI move string from response expecting format like 'e2e4'
@@ -116,14 +123,24 @@ async function makeEngineMove() {
         console.error("Engine failed:", err);
         // Unlock on error
         ground.set({ movable: { color: playerColor, dests: computeDests() } });
+    } finally {
+        // Hide Spinner
+        engineSpinner.classList.add('hidden');
+        updateStatus();
     }
 }
 
 async function sendMoveToBackend(FEN) {
+
+    const selectedEngine = engineSelect.value || "random";
+
     const response = await fetch('http://localhost:8000/move', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ FEN: FEN, engine: "random" }), 
+        body: JSON.stringify({ 
+            FEN: FEN, 
+            engine: selectedEngine
+        }), 
     });
     return await response.json();
 }
@@ -134,6 +151,8 @@ function resetGame(color) {
     game.reset();
     playerColor = color;
     
+    engineSpinner.classList.add('hidden');
+
     // Reset Board
     ground.set({
         fen: game.fen(),

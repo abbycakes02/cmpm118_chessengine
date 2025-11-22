@@ -28,10 +28,21 @@
     <div class="panel">
       <div class="panel-header">
         <h3>Status</h3>
-        <div id="status" class="status-text">Ready</div>
+        <div class="status-container">
+          <div id="status" class="status-text">Ready</div>
+          <div id="loader" class="spinner hidden"></div>
+        </div>
       </div>
 
       <div class="panel-actions">
+        <div class="setting-group">
+          <p class="label">Select Engine</p>
+          <select id="engine-select" title="engine-select" class="select-input">
+            <option value="minimax">Minimax</option>
+            <option value="random">Random</option>
+          </select>
+        </div>
+
         <p class="label">Start New Game</p>
         <div class="btn-row">
           <button id="play-white" class="btn outline">Play White</button>

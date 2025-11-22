@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from engines import random_engine
+from engines import random_engine, minimax_engine
 
 
 router = APIRouter()
@@ -15,6 +15,7 @@ class MoveRequest(BaseModel):
 #  Map of engine names to their functions
 ENGINES = {
     "random": random_engine.get_random_move,
+    "minimax": minimax_engine.get_best_move,
 }
 
 
