@@ -68,8 +68,6 @@ def minimax(board, depth, alpha, beta, maximizing_player):
     if depth == 0 or board.is_game_over():
         return evaluate_board(board)
 
-    print(f"Exploring depth {depth}, maximizing: {maximizing_player}...")
-
     # get all legal moves and explore them
     legal_moves = list(board.legal_moves)
 
