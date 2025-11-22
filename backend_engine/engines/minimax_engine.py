@@ -68,6 +68,8 @@ def minimax(board, depth, alpha, beta, maximizing_player):
     if depth == 0 or board.is_game_over():
         return evaluate_board(board)
 
+    print(f"Exploring depth {depth}, maximizing: {maximizing_player}...")
+
     # get all legal moves and explore them
     legal_moves = list(board.legal_moves)
 
@@ -117,7 +119,7 @@ def minimax(board, depth, alpha, beta, maximizing_player):
         return min_eval
 
 
-def get_best_move(fen: str, depth: int = 3) -> str:
+def get_best_move(fen: str, depth: int = 5) -> str:
     """
     runs the minimax engine to the specified depth and returns the best move in UCI format
     based on the minimax algorithm with alpha-beta pruning from Geeks for Geeks:
@@ -125,52 +127,59 @@ def get_best_move(fen: str, depth: int = 3) -> str:
 
     Args:
         fen (str): FEN string of the current board state
-        depth (int, optional): Depth to explore in the game tree. Defaults to 3.
+        depth (int, optional): Depth to explore in the game tree. Defaults to 2.
 
     Returns:
         str: Best move in UCI format
     """
+    print(f"Processing FEN: {fen} at depth {depth}...")
     # construct pychess board
     board = chess.Board(fen)
 
     # check if game is over
     if board.is_game_over():
+        print("Game is over")
         raise ValueError("Game is over")
 
     best_move = None
     legal_moves = list(board.legal_moves)
-    min_eval = -float('inf')
-    max_eval = float('inf')
+
+    # sort root nodes to make pruining more efficient
+    legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
 
     # start search from root
     if board.turn == chess.WHITE:
         # black is always the minimizing player
+        max_eval = -float('inf')
         for move in legal_moves:
             # make first move
             board.push(move)
             # kick of minimax for black turn
-            eval = minimax(board, depth - 1, -float('inf'), float('inf'), False)
+            eval_score = minimax(board, depth - 1, -float('inf'), float('inf'), False)
             board.pop()
 
             # compare saved evaluation score to new score to find best move
-            if eval > max_eval:
-                max_eval = eval
+            if eval_score > max_eval:
+                max_eval = eval_score
                 best_move = move
     else:
         # white is always the maximizing player
+        min_eval = float('inf')
         for move in legal_moves:
             # make first move
             board.push(move)
             # kick of minimax for white turn
-            eval = minimax(board, depth - 1, -float('inf'), float('inf'), True)
+            eval_score = minimax(board, depth - 1, -float('inf'), float('inf'), True)
             board.pop()
 
             # compare saved evaluation score to new score to find best move
-            if eval < min_eval:
-                min_eval = eval
+            if eval_score < min_eval:
+                min_eval = eval_score
                 best_move = move
 
     # last check if a move was found
     if best_move is None:
+        print("No legal moves found")
         raise ValueError("No legal moves available")
+    print(f"Best Move: {best_move.uci()}")
     return best_move.uci()
