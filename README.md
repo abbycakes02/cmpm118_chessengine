@@ -118,4 +118,4 @@ cd backend_engine
 python data_processing/pgn_parser.py
 ```
 
-This will read the PGN data from the `data/raw/` directory, parse each game, and extract board positions along with the game outcomes. The parsed data will be saved in chunks as Parquet files in the `data/processed/` directory.
+This will read the PGN data from the `data/raw/` directory, parse each game, and extract board positions along with the game outcomes. The parsed data will be saved in chunks as Parquet files in the `data/processed/` directory. The chunk size can be adjusted in the script, but is curretly set to 200,000 which results in about 1,000,000 positions per .parquet file at around 200MB each.
