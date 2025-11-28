@@ -25,7 +25,7 @@ body {
 
 /* === Board Container & Overlay === */
 .board-container {
-  position: relative; /* Critical for overlay positioning */
+  position: relative;
   border-radius: 4px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
@@ -36,7 +36,6 @@ body {
   background-image: url('node_modules/@lichess-org/chessground/assets/images/board/brown.png');
 }
 
-/* The Win/Loss Overlay */
 .overlay {
   position: absolute;
   top: 0; 
@@ -45,7 +44,7 @@ body {
   height: 100%;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(4px);
-  z-index: 100; /* Above pieces */
+  z-index: 100; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -77,7 +76,7 @@ body {
 
 /* === Compact Panel === */
 .panel {
-  width: 220px; /* Much smaller */
+  width: 220px;
   background: var(--panel-bg);
   padding: 20px;
   border-radius: 8px;
@@ -97,10 +96,36 @@ body {
   color: var(--text-muted);
 }
 
+/* Status Row */
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 24px;
+}
+
 .status-text {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--accent);
+}
+
+/* spinner animation */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .label {
@@ -110,9 +135,31 @@ body {
   text-transform: uppercase;
 }
 
+.setting-group {
+  margin-bottom: 20px;
+}
+
+/* dropdown */
+.select-input {
+  width: 100%;
+  padding: 10px;
+  background: #333;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .btn-row {
   display: flex;
-  flex-direction: column; /* Stack buttons vertically for compact look */
+  flex-direction: column;
   gap: 8px;
 }
 

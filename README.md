@@ -102,11 +102,11 @@ uvicorn main:app --reload
 
 The training data is sourced from the Lichess Elite Database, which contains high-quality chess games in PGN format.
 
-[Lichess Elite Database](https://database.lichess.org/#standard_games)
+[Lichess Elite Database](https://database.nikonoel.fr/)
 
 To parse these PGN files into a format suitable for training, use the `pgn_parser.py` script located in `backend_engine/data_processing/`.
 
-download the pgn.zst file but dont decompress it. The zip itself should be 30gb and its 10x the size when decompressed.
+download the pgn files into the `data/raw/` directory.
 
 Then run the following command to parse the PGN data:
 
@@ -114,8 +114,8 @@ Then run the following command to parse the PGN data:
 # Run from inside the 'backend_engine' folder
 cd backend_engine
 
-# Stream the data directly into the parser
-zstdcat ../data/raw/YOUR_FILE.pgn.zst | python data_processing/pgn_parser.py
+# run the parser
+python data_processing/pgn_parser.py
 ```
 
-This will read the compressed PGN data from standard input, parse each game, and extract board positions along with their outcomes. The parsed data will be saved in chunks as Parquet files in the `data/processed/` directory.
+This will read the PGN data from the `data/raw/` directory, parse each game, and extract board positions along with the game outcomes. The parsed data will be saved in chunks as Parquet files in the `data/processed/` directory. The chunk size can be adjusted in the script, but is curretly set to 200,000 which results in about 1,000,000 positions per .parquet file at around 200MB each.
