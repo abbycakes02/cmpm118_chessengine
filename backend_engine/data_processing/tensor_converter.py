@@ -3,7 +3,6 @@ import torch
 import numpy as np
 
 
-
 def fen_to_tensor(board_state):
     """
     Converts a FEN string into a 21x8x8 PyTorch Tensor.
@@ -87,6 +86,7 @@ def fen_to_tensor(board_state):
     # Convert Numpy Array -> PyTorch Tensor
     return torch.from_numpy(planes)
 
+
 def board_to_tensor(board_state):
     """
     Converts a chess.Board object into a 20x8x8 PyTorch Tensor.
@@ -109,7 +109,7 @@ def board_to_tensor(board_state):
 
     # look thru each piece on board and set the corresponding values
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
-    #colors = [chess.WHITE, chess.BLACK]
+    # colors = [chess.WHITE, chess.BLACK]
     for i, piece_type in enumerate(piece_types):
         # White pieces (channels 0-5)
         for square in board_state.pieces(piece_type, chess.WHITE):
@@ -154,7 +154,7 @@ def board_to_tensor(board_state):
     # tensor has multiple channels which represents different aspect of the board
     # input: board.object to tensor
 
-    
+
 # --- Quick Test Block (Only runs if you execute this file directly) ---
 if __name__ == "__main__":
     # Test board_to_tensor
