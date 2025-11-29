@@ -40,10 +40,10 @@ class ChessDataset(Dataset):
         return tensor, result
 
 
-def chunk_loader(data_dir, batch_size=512, num_workers=4):
+def chunk_loader(parquet_files, batch_size=512, num_workers=4):
     """
     Generator that yields pytorch DataLoader objects for each chunk of data in
-    the data_dir. Using the pytorch DataLoader class allows us to take advantage of
+    a list of files. Using the pytorch DataLoader class allows us to take advantage of
     multi-threading an batching in a really easy and fast way.
 
     https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader
@@ -56,13 +56,6 @@ def chunk_loader(data_dir, batch_size=512, num_workers=4):
         DataLoader: A DataLoader for each chunk of data.
     """
     # Find all parquet files in the data directory
-    parquet_files = glob.glob(os.path.join(data_dir, "*.parquet"))
-    parquet_files.sort()  # Ensure consistent order
-
-    if not parquet_files:
-        raise FileNotFoundError(f"No parquet files found in directory: {data_dir}")
-
-    print(f"Found {len(parquet_files)} parquet files in {data_dir}.")
 
     for file_path in parquet_files:
         print(f"Loading chunk from file: {os.path.basename(file_path)}")
@@ -83,8 +76,46 @@ def chunk_loader(data_dir, batch_size=512, num_workers=4):
                 pin_memory=True
                 )
 
-            yield loader, len(parquet_files)
+            yield loader
 
         except Exception as e:
             print(f"Error loading {file_path}: {e}", file=sys.stderr)
             continue
+
+
+def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_workers=4):
+    """
+    splits the parquet files in data_dir into training and validation sets,
+    then returns DataLoader objects for each set.
+    Args:
+        data_dir (str): Directory containing parquet files.
+        batch_size (int): Batch size for the DataLoader.
+        validation_split (float): Fraction of data to use for validation.
+        num_workers (int): Number of worker threads for loading data.
+    Returns:
+        train_loader (DataLoader): DataLoader for training data.
+        test_loader (DataLoader): DataLoader for validation data.
+        train_count (int): Number of training files.
+        test_count (int): Number of validation files
+    """
+    # Find all parquet files in the data directory
+    parquet_files = glob.glob(os.path.join(data_dir, "*.parquet"))
+    parquet_files.sort()  # Ensure consistent order
+
+    if not parquet_files:
+        raise FileNotFoundError(f"No parquet files found in directory: {data_dir}")
+
+    print(f"Found {len(parquet_files)} parquet files in {data_dir}.")
+
+    # Split files into training and validation sets
+    split_idx = int(len(parquet_files) * (1 - validation_split))
+    train_files = parquet_files[:split_idx]
+    test_files = parquet_files[split_idx:]
+
+    print(f'Using {len(train_files)} files for training and {len(test_files)} files for validation.')
+
+    # Create DataLoaders for training and validation sets
+    train_loader = chunk_loader(train_files, batch_size=batch_size, num_workers=num_workers)
+    test_loader = chunk_loader(test_files, batch_size=batch_size, num_workers=num_workers)
+
+    return train_loader, test_loader, len(train_files), len(test_files)
