@@ -10,8 +10,8 @@ def fen_to_tensor(board_state):
     input:
         board_state: either a FEN string or a chess.Board object
     output:
-        torch.Tensor: A 21x8x8 tensor representing the board state
-        Dimensions: [21, 8, 8]
+        torch.Tensor: A 20x8x8 tensor representing the board state
+        Dimensions: [20, 8, 8]
         - Channels 0-5:   White Pieces (Pawn, knight, Bishop, rook, queen, king)
         - Channels 6-11:  Black Pieces (Pawn, knight, Bishop, rook, queen, king)
         - Channel 12:     Side to Move (1.0 = White, 0.0 = Black)
