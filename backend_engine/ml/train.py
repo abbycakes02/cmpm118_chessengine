@@ -5,13 +5,14 @@ import time
 import os
 import csv
 
-from model import ChessValueNet
-from data_loader import get_train_test_loaders
+from .model import ChessValueNet
+from .data_loader import get_train_test_loaders
 
 # --- Config ---
 # double dirname to get to the backend_engine directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(BASE_DIR, "data", "processed")
+ROOT_DIR = os.path.dirname(BASE_DIR)
+DATA_DIR = os.path.join(ROOT_DIR, "data", "processed")
 MODEL_DIR = os.path.join(BASE_DIR, "ml", "models")
 BATCH_SIZE = 512
 LEARNING_RATE = 0.001
@@ -22,8 +23,10 @@ VALIDATION_SPLIT = 0.1
 
 def train():
     # check if GPU is available
+    pin_memory = False
     if torch.cuda.is_available():
         device = torch.device("cuda")
+        pin_memory = True
     elif torch.backends.mps.is_available():
         device = torch.device("mps")
     else:
@@ -64,7 +67,8 @@ def train():
             DATA_DIR,
             batch_size=BATCH_SIZE,
             validation_split=VALIDATION_SPLIT,
-            num_workers=4
+            num_workers=4,
+            pin_memory=pin_memory
         )
 
         print(f"  Training on {n_train} files")

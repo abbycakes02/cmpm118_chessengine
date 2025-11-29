@@ -40,7 +40,7 @@ class ChessDataset(Dataset):
         return tensor, result
 
 
-def chunk_loader(parquet_files, batch_size=512, num_workers=4):
+def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False):
     """
     Generator that yields pytorch DataLoader objects for each chunk of data in
     a list of files. Using the pytorch DataLoader class allows us to take advantage of
@@ -51,6 +51,7 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4):
         data_dir (str): Directory containing parquet files.
         batch_size (int): Batch size for the DataLoader.
         num_workers (int): Number of worker threads for loading data.
+        pin_memory (bool): Whether to use pinned memory for faster GPU transfers.
 
     Yields:
         DataLoader: A DataLoader for each chunk of data.
@@ -73,7 +74,7 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4):
                 batch_size=batch_size,
                 shuffle=True,
                 num_workers=num_workers,
-                pin_memory=True
+                pin_memory=pin_memory
                 )
 
             yield loader
@@ -83,7 +84,7 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4):
             continue
 
 
-def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_workers=4):
+def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_workers=4, pin_memory=False):
     """
     splits the parquet files in data_dir into training and validation sets,
     then returns DataLoader objects for each set.
@@ -92,6 +93,7 @@ def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_w
         batch_size (int): Batch size for the DataLoader.
         validation_split (float): Fraction of data to use for validation.
         num_workers (int): Number of worker threads for loading data.
+        pin_memory (bool): Whether to use pinned memory for faster GPU transfers.
     Returns:
         train_loader (DataLoader): DataLoader for training data.
         test_loader (DataLoader): DataLoader for validation data.
@@ -115,7 +117,7 @@ def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_w
     print(f'Using {len(train_files)} files for training and {len(test_files)} files for validation.')
 
     # Create DataLoaders for training and validation sets
-    train_loader = chunk_loader(train_files, batch_size=batch_size, num_workers=num_workers)
-    test_loader = chunk_loader(test_files, batch_size=batch_size, num_workers=num_workers)
+    train_loader = chunk_loader(train_files, batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory)
+    test_loader = chunk_loader(test_files, batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory)
 
     return train_loader, test_loader, len(train_files), len(test_files)
