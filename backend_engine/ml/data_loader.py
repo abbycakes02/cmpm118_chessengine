@@ -4,6 +4,7 @@ import pandas as pd
 import glob
 import sys
 import os
+import gc
 
 from backend_engine.data_processing.tensor_converter import fen_to_tensor
 
@@ -75,10 +76,16 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False)
                 shuffle=True,
                 num_workers=num_workers,
                 pin_memory=pin_memory,
-                persistent_workers=True if num_workers > 0 else False
+                persistent_workers=False
                 )
 
             yield loader
+            # free up memory
+            del loader
+            del dataset
+            del df
+            # force garbage collection
+            gc.collect()
 
         except Exception as e:
             print(f"Error loading {file_path}: {e}", file=sys.stderr)
