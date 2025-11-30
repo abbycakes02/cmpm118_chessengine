@@ -45,7 +45,7 @@ class ChessEvaluator():
             self.model.load_state_dict(weights)
         except RuntimeError as e:
             raise RuntimeError(f"Error loading model weights: {e}")
-        
+
         self.model.eval()
 
     def __call__(self, board):
