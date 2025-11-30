@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.amp import autocast, GradScaler
 import time
 import os
 import csv
@@ -14,24 +15,45 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 DATA_DIR = os.path.join(ROOT_DIR, "data", "processed")
 MODEL_DIR = os.path.join(BASE_DIR, "ml", "models")
-BATCH_SIZE = 512
-LEARNING_RATE = 0.001
-EPOCHS = 5
+
+# Training Hyperparameters
+BATCH_SIZE = 2048
+LEARNING_RATE = 0.002
+EPOCHS = 3
 VALIDATION_SPLIT = 0.1
+NUM_WORKERS = 8
+
+# achitecture Hyperparameters
+NUM_CHANNELS = 32
+NUM_RESIDUAL_BLOCKS = 3
 # --------------
 
 
 def train():
     # check if GPU is available
+    use_amp = False
+    amp_device = 'cpu'
     pin_memory = False
     if torch.cuda.is_available():
         device = torch.device("cuda")
+        use_amp = True
+        amp_device = 'cuda'
         pin_memory = True
+        print(f"GPU detected, using device: {device} with AMP and Pin memory enabled.")
+
     elif torch.backends.mps.is_available():
         device = torch.device("mps")
+        use_amp = True
+        amp_device = 'mps'
+        pin_memory = False
+        print(f"MPS device detected, using device: {device} with AMP enabled, Pin memory disabled.")
+
     else:
         device = torch.device("cpu")
-    print(f"Using device: {device}")
+        amp_device = 'cpu'
+        use_amp = False
+        pin_memory = False
+        print(f"Using CPU device: {device} without AMP or Pin memory.")
 
     if not os.path.exists(DATA_DIR):
         raise FileNotFoundError(f"Data directory not found: {DATA_DIR}")
@@ -50,14 +72,29 @@ def train():
     log_path = os.path.join(session_model_dir, "training_log.csv")
     with open(log_path, "w") as log_file:
         writer = csv.writer(log_file)
-        writer.writerow(["epoch", "train_loss", "val_loss", "time_elapsed"])
+        writer.writerow(["epoch", "chunk", "train_loss", "val_loss", "time_elapsed"])
 
     # Initialize the model, loss function, and optimizer
-    model = ChessValueNet().to(device)
+    model = ChessValueNet(
+        num_channels=NUM_CHANNELS,
+        num_residual_blocks=NUM_RESIDUAL_BLOCKS
+        ).to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
+    # set up AMP if running on gpu
+    scaler = GradScaler(enabled=use_amp)
+
     start_time = time.time()
+    print("\n Starting Training With hyperparameters:")
+    print(f"  Batch Size: {BATCH_SIZE}")
+    print(f"  Learning Rate: {LEARNING_RATE}")
+    print(f"  Epochs: {EPOCHS}")
+    print(f"  Validation Split: {VALIDATION_SPLIT}")
+    print(f"  Number of Channels: {NUM_CHANNELS}")
+    print(f"  Number of Residual Blocks: {NUM_RESIDUAL_BLOCKS}")
+    print(f"  Using AMP: {use_amp}")
+    print(f"  Start Time: {time.ctime(start_time)}")
 
     for epoch in range(EPOCHS):
         print(f"\n --- Epoch {epoch + 1}/{EPOCHS} ---")
@@ -67,7 +104,7 @@ def train():
             DATA_DIR,
             batch_size=BATCH_SIZE,
             validation_split=VALIDATION_SPLIT,
-            num_workers=4,
+            num_workers=NUM_WORKERS,
             pin_memory=pin_memory
         )
 
@@ -88,13 +125,16 @@ def train():
                 # Zero the parameter gradients
                 optimizer.zero_grad()
 
-                # Forward pass
-                outputs = model(inputs)
-                loss = criterion(outputs, targets)
+                # check if using AMP, then use autocast to speed up training by using mixed precision where possible
+                with autocast(enabled=use_amp, device_type=amp_device, dtype=torch.float16):
+                    # Forward pass
+                    outputs = model(inputs)
+                    loss = criterion(outputs, targets)
 
-                # Backward pass and optimization
-                loss.backward()
-                optimizer.step()
+                # Backward pass and optimization with AMP scaler
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
 
                 chunk_loss += loss.item()
                 steps += 1
@@ -102,10 +142,13 @@ def train():
             avg_loss = chunk_loss / steps if steps > 0 else 0
             epoch_train_loss += avg_loss
             train_chunks += 1
-            print(f'    [Chunk {i + 1}] Training Loss: {avg_loss:.6f}')
+            print(f'    [Chunk {i + 1}] Training Loss: {avg_loss:.6f}, Elapsed Time: {time.time() - start_time:.2f} seconds')
+            with open(log_path, "a") as log_file:
+                writer = csv.writer(log_file)
+                writer.writerow([epoch + 1, i + 1, f"{avg_loss:.6f}", "", f"{time.time() - start_time:.2f}"])
 
         avg_epoch_train_loss = epoch_train_loss / train_chunks if train_chunks > 0 else 0
-        print(f"  Average Training Loss for Epoch {epoch + 1}: {avg_epoch_train_loss:.6f}")
+        print(f"  Average Training Loss for Epoch {epoch + 1}: {avg_epoch_train_loss:.6f}, Elapsed Time: {time.time() - start_time:.2f} seconds")
 
         print(f"  Validating on {n_test} files")
         # put the model in evaluation mode to evaluate on validation set
@@ -134,22 +177,17 @@ def train():
                 val_chunks += 1
 
         avg_epoch_val_loss = epoch_val_loss / val_chunks if val_chunks > 0 else 0
-        print(f"  Average Validation Loss for Epoch {epoch + 1}: {avg_epoch_val_loss:.6f}")
-
-        # after validation, save model checkpoint and log results
-        checkpoint_path = os.path.join(session_model_dir, f"epoch_{epoch + 1}.pth")
-        torch.save(model.state_dict(), checkpoint_path)
-
+        print(f"  Average Validation Loss for Epoch {epoch + 1}: {avg_epoch_val_loss:.6f}, in {time.time() - start_time:.2f} seconds")
         with open(log_path, "a") as log_file:
             writer = csv.writer(log_file)
-            writer.writerow([
-                epoch + 1,
-                f"{avg_epoch_train_loss:.6f}",
-                f"{avg_epoch_val_loss:.6f}",
-                f"{time.time() - start_time:.2f}"
-            ])
+            writer.writerow([epoch + 1, "all", f"{avg_epoch_train_loss:.6f}", f"{avg_epoch_val_loss:.6f}", f"{time.time() - start_time:.2f}"])
 
-    final_model_path = os.path.join(session_model_dir, "chess_value_net_final.pth")
+        # after validation, save model checkpoint and log results
+        checkpoint_path = os.path.join(session_model_dir, f"epoch_{epoch + 1}_{NUM_CHANNELS}ch_{NUM_RESIDUAL_BLOCKS}resblocks.pth")
+        torch.save(model.state_dict(), checkpoint_path)
+
+    model_filename = (f"chess_valuenet_{NUM_CHANNELS}ch_{NUM_RESIDUAL_BLOCKS}resblocks.pth")
+    final_model_path = os.path.join(session_model_dir, model_filename)
     torch.save(model.state_dict(), final_model_path)
     print(f"\nTraining complete in {time.time() - start_time:.2f} seconds.")
     print(f"Final model saved to: {final_model_path}")

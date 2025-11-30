@@ -1,22 +1,81 @@
 import chess
 import torch
+import numpy as np
 
 
 def fen_to_tensor(fen_str):
     """
-    Wraps board_to_tensor to accept FEN strings as input.
-
+    uses string parsing to convert a FEN string into a 20x8x8 PyTorch Tensor in a performant way.
     input:
         fen_str: a FEN string
     output:
         torch.Tensor: A 20x8x8 tensor representing the board state
     """
+    PIECE_TO_CHANNEL = {
+        'P': 0, 'N': 1, 'B': 2, 'R': 3, 'Q': 4, 'K': 5,  # white pieces
+        'p': 6, 'n': 7, 'b': 8, 'r': 9, 'q': 10, 'k': 11  # black pieces
+    }
+    # split the FEN string into its components
+    parts = fen_str.split()
+    board_part = parts[0]
+    side_to_move = parts[1]
+    castling_rights = parts[2]
+    en_passant = parts[3]
+    halfmove_clock = int(parts[4])
+    fullmove_number = int(parts[5])
 
-    if not isinstance(fen_str, str):
-        raise ValueError("Input must be a FEN string.")
+    tensor = np.zeros((20, 8, 8), dtype=np.float32)
 
-    board = chess.Board(fen_str)
-    return board_to_tensor(board)
+    # iterate over the board part to fill in piece positions
+    # channels 0-11: piece positions
+    row = 0
+    col = 0
+    for char in board_part:
+        if char == '/':
+            row += 1
+            col = 0
+        elif char.isdigit():
+            # empty squares
+            col += int(char)
+        else:
+            channel = PIECE_TO_CHANNEL[char]
+            tensor[channel, row, col] = 1.0
+            col += 1
+
+    # channel 12: side to move
+    # 1.0 for white, 0.0 for black
+    if side_to_move == 'w':
+        tensor[12, :, :].fill(1.0)
+
+    # channels 13-16: castling rights
+    # check white king and queenside
+    if 'K' in castling_rights:
+        tensor[13, :, :].fill(1.0)
+    if 'Q' in castling_rights:
+        tensor[14, :, :].fill(1.0)
+    # check black king and queenside
+    if 'k' in castling_rights:
+        tensor[15, :, :].fill(1.0)
+    if 'q' in castling_rights:
+        tensor[16, :, :].fill(1.0)
+
+    # channel 17: en passant target square
+    if en_passant != '-':
+        # the chess notation is file + rank, e.g. 'e3'
+        # to convert to 0-indexed row/col:
+        # use ord to get the unicode difference from 'a' for file
+        file_char = en_passant[0]
+        rank_char = en_passant[1]
+        file_col = ord(file_char) - ord('a')
+        rank_row = 8 - int(rank_char)  # ranks go from 1-8
+        tensor[17, rank_row, file_col] = 1.0
+
+    # channel 18: 50-move rule counter (halfmove clock)
+    tensor[18, :, :].fill(halfmove_clock / 100.0)
+    # channel 19: game phase / total move count (fullmove number)
+    tensor[19, :, :].fill(min(fullmove_number / 200.0, 1.0))
+
+    return torch.from_numpy(tensor)
 
 
 def board_to_tensor(board_state):

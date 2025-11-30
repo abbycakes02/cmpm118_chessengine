@@ -74,7 +74,8 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False)
                 batch_size=batch_size,
                 shuffle=True,
                 num_workers=num_workers,
-                pin_memory=pin_memory
+                pin_memory=pin_memory,
+                persistent_workers=True if num_workers > 0 else False
                 )
 
             yield loader
