@@ -43,10 +43,10 @@ def train():
 
     elif torch.backends.mps.is_available():
         device = torch.device("mps")
-        use_amp = True
-        amp_device = 'mps'
+        use_amp = False
+        amp_device = 'cpu'
         pin_memory = False
-        print(f"MPS device detected, using device: {device} with AMP enabled, Pin memory disabled.")
+        print(f"MPS device detected, using device: {device} with AMP and Pin memory disabled.")
 
     else:
         device = torch.device("cpu")
@@ -72,7 +72,7 @@ def train():
     log_path = os.path.join(session_model_dir, "training_log.csv")
     with open(log_path, "w") as log_file:
         writer = csv.writer(log_file)
-        writer.writerow(["epoch", "chunk", "train_loss", "val_loss", "time_elapsed"])
+        writer.writerow(["timestamp", "epoch", "chunk", "train_loss", "val_loss"])
 
     # Initialize the model, loss function, and optimizer
     model = ChessValueNet(
@@ -145,7 +145,7 @@ def train():
             print(f'    [Chunk {i + 1}] Training Loss: {avg_loss:.6f}, Elapsed Time: {time.time() - start_time:.2f} seconds')
             with open(log_path, "a") as log_file:
                 writer = csv.writer(log_file)
-                writer.writerow([epoch + 1, i + 1, f"{avg_loss:.6f}", "", f"{time.time() - start_time:.2f}"])
+                writer.writerow([f"{time.time() - start_time:.2f}", epoch + 1, i + 1, f"{avg_loss:.6f}", ""])
 
         avg_epoch_train_loss = epoch_train_loss / train_chunks if train_chunks > 0 else 0
         print(f"  Average Training Loss for Epoch {epoch + 1}: {avg_epoch_train_loss:.6f}, Elapsed Time: {time.time() - start_time:.2f} seconds")
@@ -180,7 +180,7 @@ def train():
         print(f"  Average Validation Loss for Epoch {epoch + 1}: {avg_epoch_val_loss:.6f}, in {time.time() - start_time:.2f} seconds")
         with open(log_path, "a") as log_file:
             writer = csv.writer(log_file)
-            writer.writerow([epoch + 1, "all", f"{avg_epoch_train_loss:.6f}", f"{avg_epoch_val_loss:.6f}", f"{time.time() - start_time:.2f}"])
+            writer.writerow([f"{time.time() - start_time:.2f}", epoch + 1, "end", "", f"{avg_epoch_val_loss:.6f}"])
 
         # after validation, save model checkpoint and log results
         checkpoint_path = os.path.join(session_model_dir, f"epoch_{epoch + 1}_{NUM_CHANNELS}ch_{NUM_RESIDUAL_BLOCKS}resblocks.pth")
