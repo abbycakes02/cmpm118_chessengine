@@ -5,6 +5,7 @@ import glob
 import sys
 import os
 import gc
+import time
 
 from backend_engine.data_processing.tensor_converter import fen_to_tensor
 
@@ -86,6 +87,8 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False)
             del df
             # force garbage collection
             gc.collect()
+            # give the os time to collect garbage
+            time.sleep(0.1)
 
         except Exception as e:
             print(f"Error loading {file_path}: {e}", file=sys.stderr)

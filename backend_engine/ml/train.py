@@ -21,7 +21,7 @@ BATCH_SIZE = 2048
 LEARNING_RATE = 0.002
 EPOCHS = 3
 VALIDATION_SPLIT = 0.1
-NUM_WORKERS = 8
+NUM_WORKERS = 4
 
 # achitecture Hyperparameters
 NUM_CHANNELS = 32
@@ -117,6 +117,7 @@ def train():
         for i, loader in enumerate(train_loader):
             chunk_loss = 0.0
             steps = 0
+            chunk_start_time = time.time()
 
             for inputs, targets in loader:
                 # move tensors to the configured device
@@ -142,7 +143,7 @@ def train():
             avg_loss = chunk_loss / steps if steps > 0 else 0
             epoch_train_loss += avg_loss
             train_chunks += 1
-            print(f'    [Chunk {i + 1}] Training Loss: {avg_loss:.6f}, Elapsed Time: {time.time() - start_time:.2f} seconds')
+            print(f'    [Chunk {i + 1}] Training Loss: {avg_loss:.6f}, in: {time.time() - chunk_start_time:.2f} seconds')
             with open(log_path, "a") as log_file:
                 writer = csv.writer(log_file)
                 writer.writerow([f"{time.time() - start_time:.2f}", epoch + 1, i + 1, f"{avg_loss:.6f}", ""])
