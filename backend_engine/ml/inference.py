@@ -2,7 +2,7 @@ import torch
 import os
 
 from .model import ChessValueNet
-from backend_engine.data_processing.tensor_converter import fen_to_tensor
+from data_processing.tensor_converter import fen_to_tensor
 
 
 class ChessEvaluator():

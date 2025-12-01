@@ -12,6 +12,7 @@ from .data_loader import get_train_test_loaders
 # --- Config ---
 # double dirname to get to the backend_engine directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# one more time to get to the project root
 ROOT_DIR = os.path.dirname(BASE_DIR)
 DATA_DIR = os.path.join(ROOT_DIR, "data", "processed")
 MODEL_DIR = os.path.join(BASE_DIR, "ml", "models")
@@ -26,6 +27,10 @@ NUM_WORKERS = 4
 # achitecture Hyperparameters
 NUM_CHANNELS = 32
 NUM_RESIDUAL_BLOCKS = 3
+
+# Resume training from a checkpoint (if False, starts fresh)
+RESUME_TRAINING = True
+RESUME_MODEL_PATH = os.path.join(MODEL_DIR, "session_1764532867", "epoch_1_32ch_3resblocks.pth")
 # --------------
 
 
@@ -79,6 +84,20 @@ def train():
         num_channels=NUM_CHANNELS,
         num_residual_blocks=NUM_RESIDUAL_BLOCKS
         ).to(device)
+
+    # check if resuming training from a checkpoint
+    if RESUME_TRAINING and os.path.exists(RESUME_MODEL_PATH):
+        print(f"Resuming training from checkpoint: {RESUME_MODEL_PATH}")
+        checkpoint_weights = torch.load(RESUME_MODEL_PATH, map_location=device)
+        try:
+            model.load_state_dict(checkpoint_weights)
+            print("Model weights loaded successfully.")
+        except RuntimeError as e:
+            raise RuntimeError(f"Error loading checkpoint weights: {e}")
+    else:
+        if not os.path.exists(RESUME_MODEL_PATH):
+            print(f"Resume model path specified but file not found: {RESUME_MODEL_PATH}")
+
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
