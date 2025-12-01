@@ -87,16 +87,17 @@ def train():
         ).to(device)
 
     # check if resuming training from a checkpoint
-    if RESUME_TRAINING and os.path.exists(RESUME_MODEL_PATH):
-        print(f"Resuming training from checkpoint: {RESUME_MODEL_PATH}")
-        checkpoint_weights = torch.load(RESUME_MODEL_PATH, map_location=device)
-        try:
-            model.load_state_dict(checkpoint_weights)
-            print("Model weights loaded successfully.")
-        except RuntimeError as e:
-            raise RuntimeError(f"Error loading checkpoint weights: {e}")
+    if RESUME_TRAINING:
+        if RESUME_MODEL_PATH and os.path.exists(RESUME_MODEL_PATH):
+            print(f"Resuming training from checkpoint: {RESUME_MODEL_PATH}")
+            checkpoint_weights = torch.load(RESUME_MODEL_PATH, map_location=device)
+            try:
+                model.load_state_dict(checkpoint_weights)
+                print("Model weights loaded successfully.")
+            except RuntimeError as e:
+                raise RuntimeError(f"Error loading checkpoint weights: {e}")
     else:
-        if not os.path.exists(RESUME_MODEL_PATH):
+        if not RESUME_MODEL_PATH or not os.path.exists(RESUME_MODEL_PATH):
             print(f"Resume model path specified but file not found: {RESUME_MODEL_PATH}")
 
     criterion = nn.MSELoss()
