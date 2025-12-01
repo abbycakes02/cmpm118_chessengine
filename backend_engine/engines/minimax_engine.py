@@ -210,7 +210,7 @@ class MinimaxEngine:
             try:
                 # check if we're within a couple miliseconds of the time limit before starting a new depth
                 if (time.time() - start_time) > time_limit * 0.9:
-                    print("Approaching time limit, stopping search before depth {curr_depth}")
+                    print(f"Approaching time limit, stopping search before depth {curr_depth}")
                     break
 
                 curr_best_move = None
