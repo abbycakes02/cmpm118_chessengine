@@ -258,7 +258,7 @@ class MinimaxEngine:
                             curr_best_move = move
                 best_move = curr_best_move
 
-                print(f" Depth {curr_depth} best move: {best_move.uci()}, Nodes searched: {self.nodes_searched}")
+                print(f" Depth {curr_depth} best move: {best_move.uci()}, Nodes searched: {self.nodes_searched}, time elapsed: {time.time() - start_time:.2f} seconds")
 
             except TimeoutError:
                 print(f"Time limit reached at depth {curr_depth}, stopping search.")
