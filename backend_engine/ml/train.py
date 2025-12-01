@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import StepLR
 from torch.amp import autocast, GradScaler
 import time
 import os
@@ -18,19 +19,19 @@ DATA_DIR = os.path.join(ROOT_DIR, "data", "processed")
 MODEL_DIR = os.path.join(BASE_DIR, "ml", "models")
 
 # Training Hyperparameters
-BATCH_SIZE = 2048
+BATCH_SIZE = 1048
 LEARNING_RATE = 0.002
 EPOCHS = 3
 VALIDATION_SPLIT = 0.1
 NUM_WORKERS = 4
 
 # achitecture Hyperparameters
-NUM_CHANNELS = 32
+NUM_CHANNELS = 64
 NUM_RESIDUAL_BLOCKS = 3
 
 # Resume training from a checkpoint (if False, starts fresh)
-RESUME_TRAINING = True
-RESUME_MODEL_PATH = os.path.join(MODEL_DIR, "session_1764532867", "epoch_1_32ch_3resblocks.pth")
+RESUME_TRAINING = False
+RESUME_MODEL_PATH = None  # os.path.join(MODEL_DIR, "session_1764532867", "epoch_1_64ch_3resblocks.pth")
 # --------------
 
 
@@ -100,6 +101,10 @@ def train():
 
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+
+    # implement learning rate scheduler to reduce lr if validation loss plateaus
+    # drops from 0.002 to 0.0002 after an epoch
+    scheduler = StepLR(optimizer, step_size=2, gamma=0.1)
 
     # set up AMP if running on gpu
     scaler = GradScaler(enabled=use_amp)
@@ -201,6 +206,10 @@ def train():
         with open(log_path, "a") as log_file:
             writer = csv.writer(log_file)
             writer.writerow([f"{time.time() - start_time:.2f}", epoch + 1, "end", "", f"{avg_epoch_val_loss:.6f}"])
+
+        # update lr
+        scheduler.step()
+        print(f"  Learning Rate adjusted to: {scheduler.get_last_lr()[0]:.6f}")
 
         # after validation, save model checkpoint and log results
         checkpoint_path = os.path.join(session_model_dir, f"epoch_{epoch + 1}_{NUM_CHANNELS}ch_{NUM_RESIDUAL_BLOCKS}resblocks.pth")
