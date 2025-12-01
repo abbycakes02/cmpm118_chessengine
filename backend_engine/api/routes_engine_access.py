@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
-from engines import random_engine, minimax_engine
+from engines import random_engine
 
 
 router = APIRouter()
@@ -12,42 +12,34 @@ class MoveRequest(BaseModel):
     engine: str = "random"  # Default to random engine
 
 
-#  Map of engine names to their functions
-ENGINES = {
-    "random": random_engine.get_random_move,
-    "minimax": minimax_engine.get_best_move,
-}
-
-
 @router.post("/move")
-async def get_move(request: MoveRequest):
+async def get_move(request: MoveRequest, req: Request):
     """
     gets a move from the appropriate engine and returns it as UCI string
     Input: JSON with FEN string and engine name
     Output: JSON with UCI move string
     """
-    # Check if the requested engine exists
-    if request.engine not in ENGINES:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Engine '{request.engine}' not found. Options: {list(ENGINES.keys())}"
-            )
+    # get the available engines from app state
+    engines = req.app.state.engines
 
-    selected_engine = ENGINES[request.engine]
+    # select the engine from the request
 
-    try:
-        # Call the engine logic (Pure Python, no HTTP stuff)
-        move_uci = selected_engine(request.FEN)
+    if request.engine == "random":
+        move = random_engine.get_move(request.FEN)
+    elif request.engine == "minimax":
+        minimax = engines.get('minimax')
+        if minimax is None:
+            raise HTTPException(status_code=500, detail="Minimax engine not initialized.")
+        move = minimax.get_move(request.FEN, time_limit=5, max_depth=None)
+    elif request.engine == "minimax_nn":
+        minimax_nn = engines.get('minimax_nn')
+        if minimax_nn is None:
+            raise HTTPException(status_code=500, detail="Minimax NN engine not initialized.")
+        move = minimax_nn.get_move(request.FEN, time_limit=5, max_depth=None)
+    else:
+        raise HTTPException(status_code=404, detail=f"{request.engine} engine not found.")
 
-        return {
-            "move": move_uci,
-            "engine": request.engine
-        }
-
-    except ValueError as e:
-        # Handle game over or logic errors from the engine
-        return {"move": None, "status": str(e)}
-
-    except Exception as e:
-        print(f"Server Error: {e}")
-        raise HTTPException(status_code=500, detail="Internal Engine Error")
+    return {
+        "move": move,
+        "engine": request.engine
+    }
