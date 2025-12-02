@@ -119,3 +119,20 @@ python data_processing/pgn_parser.py
 ```
 
 This will read the PGN data from the `data/raw/` directory, parse each game, and extract board positions along with the game outcomes. The parsed data will be saved in chunks as Parquet files in the `data/processed/` directory. The chunk size can be adjusted in the script, but is curretly set to 200,000 which results in about 1,000,000 positions per .parquet file at around 200MB each.
+
+### Training the Model
+
+Once the data is parsed and saved in the `data/processed/` directory, you can train the neural network model using the `train.py` script located in `backend_engine/ml/`.
+
+To ensure all the local depenancies are resolved run the training script from within the `root` directory,
+eg: /Users/username/cmpm118_chessengine/
+
+then run the training using the following command:
+
+```bash
+python -m backend_engine.ml.train
+```
+
+The training script will detect GPU availability, and then load the data in sequential chunks to keep memory usage manageable. The model will be trained over multiple epochs, and the trained model weights will be saved to the `backend_engine/ml/models/` directory, with regular checkpoints during training.
+
+All hyper parameters can be tweaked in `train.py`.
