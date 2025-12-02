@@ -122,7 +122,7 @@ def train():
     print(f"  Start Time: {time.ctime(start_time)}")
 
     for epoch in range(EPOCHS):
-        print(f"\n --- Epoch {epoch + 1}/{EPOCHS} ---")
+        print(f"\n --- Epoch {epoch + 1}/{EPOCHS} Lr: {optimizer.param_groups[0]['lr']}---")
 
         # get a loader for each chunk of data
         train_loader, test_loader, n_train, n_test = get_train_test_loaders(
@@ -210,7 +210,6 @@ def train():
 
         # update lr
         scheduler.step()
-        print(f"  Learning Rate adjusted to: {scheduler.get_last_lr()[0]:.6f}")
 
         # after validation, save model checkpoint and log results
         checkpoint_path = os.path.join(session_model_dir, f"epoch_{epoch + 1}_{NUM_CHANNELS}ch_{NUM_RESIDUAL_BLOCKS}resblocks.pth")
