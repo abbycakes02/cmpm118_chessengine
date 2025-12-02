@@ -1,0 +1,752 @@
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "1"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:41"]
+[GameEndTime "2025-11-30T00:04:04.899 PST"]
+[GameStartTime "2025-11-30T00:02:23.330 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "30"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. g3 {0.97s} d5 {-0.18/27 7.5s} 2. Nf3 {2.0s} Nf6 {-0.20/23 2.3s} 3. Ng1 {2.2s}
+h5 {+1.06/17 0.52s} 4. Bg2 {2.4s} Nc6 {+1.33/17 1.2s} 5. Bf3 {3.9s}
+h4 {+1.88/20 2.2s} 6. gxh4 {3.1s} Rxh4 {+2.11/19 2.0s} 7. Bg2 {4.1s}
+Bf5 {+2.28/24 6.5s} 8. Nf3 {6.8s} Rg4 {+1.93/23 4.4s} 9. Bh3 {7.7s}
+e5 {+1.92/19 1.3s} 10. Bxg4 {5.7s} Nxg4 {+1.82/20 1.9s} 11. Nc3 {6.6s}
+d4 {+3.58/19 1.8s} 12. Nb5 {5.5s} e4 {+4.52/21 1.3s} 13. Nh4 {2.7s}
+Qxh4 {+7.38/20 2.1s} 14. Rf1 {1.3s} Rd8 {+7.33/19 4.1s} 15. Nxc7+ {1.5s}
+Ke7 {+7.27/21 1.9s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "2"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A46"]
+[GameDuration "00:01:35"]
+[GameEndTime "2025-11-30T00:05:40.214 PST"]
+[GameStartTime "2025-11-30T00:04:04.902 PST"]
+[Opening "Queen's pawn game"]
+[PlyCount "25"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. d4 {+0.35/21 5.2s} Nf6 {2.6s} 2. Nf3 {+0.28/23 5.0s} Nc6 {3.1s}
+3. d5 {+0.75/14 0.46s} Nb8 {2.9s} 4. Nc3 {+0.64/23 6.6s} Rg8 {3.4s}
+5. g3 {+1.76/16 0.46s} Rh8 {3.9s} 6. Bg2 {+1.79/20 2.5s} Rg8 {4.5s}
+7. a4 {+2.76/19 1.3s} Rh8 {4.3s} 8. e4 {+2.78/20 1.6s} Rg8 {5.3s}
+9. Qe2 {+4.62/17 0.62s} Rh8 {6.4s} 10. Bf4 {+4.79/19 1.4s} Rg8 {8.6s}
+11. h4 {+5.15/22 2.3s} Rh8 {7.9s} 12. e5 {+5.13/18 0.68s} Ng4 {4.3s}
+13. Ng5 {+5.87/19 1.9s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "3"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:37"]
+[GameEndTime "2025-11-30T00:07:17.821 PST"]
+[GameStartTime "2025-11-30T00:05:40.215 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. g3 {1.6s} c5 {-0.22/25 7.5s} 2. Nh3 {2.7s} e6 {+0.56/17 1.1s} 3. Ng1 {3.3s}
+d5 {+0.56/23 2.2s} 4. Nf3 {4.1s} Nc6 {+0.53/23 4.8s} 5. Ng1 {5.8s}
+Be7 {+1.55/17 1.1s} 6. Bh3 {4.6s} f5 {+1.67/19 1.9s} 7. Bg2 {5.4s}
+e5 {+1.58/21 4.6s} 8. Bh3 {3.7s} Nf6 {+2.52/19 0.94s} 9. Bg2 {3.9s}
+Be6 {+2.50/21 2.4s} 10. Bh3 {5.5s} O-O {+3.40/20 1.4s} 11. Bg2 {4.8s}
+h6 {+3.15/19 2.2s} 12. Bh3 {5.4s} Qd7 {+3.81/19 1.2s} 13. Bg2 {5.0s}
+Bd6 {+3.88/21 4.6s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "4"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A10"]
+[GameDuration "00:01:35"]
+[GameEndTime "2025-11-30T00:08:53.025 PST"]
+[GameStartTime "2025-11-30T00:07:17.822 PST"]
+[Opening "English Opening"]
+[PlyCount "25"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. c4 {+0.36/25 4.0s} g6 {1.5s} 2. Nf3 {+0.31/20 1.7s} Nh6 {1.9s}
+3. d4 {+1.17/18 1.3s} Ng8 {2.5s} 4. Nc3 {+1.35/20 1.6s} Bg7 {3.1s}
+5. e4 {+1.29/23 5.3s} Nf6 {6.1s} 6. Be3 {+1.95/17 0.50s} Rg8 {8.4s}
+7. Qe2 {+2.73/19 1.6s} Rh8 {6.3s} 8. h3 {+2.66/21 1.8s} Rg8 {7.0s}
+9. Rd1 {+6.00/20 0.92s} Rh8 {6.0s} 10. e5 {+3.39/22 2.7s} Ng8 {3.8s}
+11. Qd2 {+3.53/24 6.2s} Kf8 {4.1s} 12. Bd3 {+3.31/20 2.9s} Ke8 {5.7s}
+13. Bf4 {+4.02/22 2.4s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "5"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:33"]
+[GameEndTime "2025-11-30T00:10:26.368 PST"]
+[GameStartTime "2025-11-30T00:08:53.025 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+[Variation "reversed Alekhine"]
+
+1. g3 {1.0s} e5 {-0.18/27 7.5s} 2. Nf3 {2.4s} Nc6 {+0.17/23 5.0s} 3. Nh4 {5.9s}
+Bc5 {+1.06/18 1.5s} 4. Bh3 {5.1s} Nf6 {+1.75/16 0.97s} 5. Nf5 {8.0s}
+h5 {+1.60/19 1.8s} 6. Nxg7+ {3.3s} Kf8 {+1.47/19 1.9s} 7. Nf5 {4.0s}
+Ng4 {+1.45/19 2.0s} 8. Ne3 {6.5s} d5 {+0.77/19 2.2s} 9. Nxg4 {4.6s}
+Qe7 {+0.77/18 1.9s} 10. Bg2 {3.7s} hxg4 {-0.22/20 3.2s} 11. Bxd5 {5.7s}
+Bxf2+ {+0.40/17 1.7s} 12. Kxf2 {0.66s} Qc5+ {+0.26/18 2.0s} 13. e3 {0.81s}
+Nd4 {+0.15/18 1.7s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "6"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:01:31"]
+[GameEndTime "2025-11-30T00:11:58.208 PST"]
+[GameStartTime "2025-11-30T00:10:26.369 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "25"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+[Variation "Brooklyn defense"]
+
+1. e4 {+0.33/22 3.7s} Nf6 {3.1s} 2. e5 {+0.70/19 1.6s} Ng8 {2.2s}
+3. Nf3 {+1.14/19 1.7s} Nc6 {2.0s} 4. a3 {+1.19/18 1.7s} d6 {2.1s}
+5. d4 {+0.39/23 7.1s} dxe5 {5.8s} 6. dxe5 {+0.20/19 1.5s} Qxd1+ {2.4s}
+7. Kxd1 {-0.82/17 0.35s} Bg4 {5.5s} 8. Bf4 {-0.61/19 2.3s} Rd8+ {9.0s}
+9. Kc1 {-0.36/19 2.9s} g5 {8.9s} 10. Bxg5 {-0.24/21 2.6s} Bh6 {8.8s}
+11. Nbd2 {+0.53/16 0.65s} Kf8 {5.6s} 12. Bxh6+ {+1.61/16 0.67s} Nxh6
+13. Be2 {+1.44/18 2.1s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "7"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:36"]
+[GameEndTime "2025-11-30T00:13:34.728 PST"]
+[GameStartTime "2025-11-30T00:11:58.209 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "20"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. g3 {1.3s} c5 {-0.22/25 7.5s} 2. Nh3 {2.0s} Nf6 {+0.54/21 2.9s} 3. Ng1 {1.7s}
+d5 {+0.74/16 0.67s} 4. Bg2 {4.0s} Bf5 {+0.86/21 4.4s} 5. Nc3 {6.1s}
+e6 {+0.66/20 3.7s} 6. Nb5 {7.6s} Qd7 {+1.21/21 3.0s} 7. Nc3 {5.6s}
+d4 {+1.16/17 1.2s} 8. Nb1 {6.3s} Be7 {+1.13/20 2.1s} 9. Nf3 {6.8s}
+Nc6 {+1.18/18 1.4s} 10. Ng5 {8.7s} O-O {+2.33/19 1.8s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "8"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:01:33"]
+[GameEndTime "2025-11-30T00:15:08.266 PST"]
+[GameStartTime "2025-11-30T00:13:34.728 PST"]
+[Opening "Van't Kruijs Opening"]
+[PlyCount "23"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. e3 {+0.38/23 3.9s} g6 {2.6s} 2. d4 {+0.32/21 1.6s} Nf6 {4.0s}
+3. Nf3 {+0.27/23 3.1s} Rg8 {4.2s} 4. c4 {+1.44/18 1.3s} Rh8 {3.8s}
+5. h3 {+1.57/18 2.1s} Rg8 {4.2s} 6. Bd3 {+1.96/22 3.5s} Rh8 {5.4s}
+7. Bd2 {+2.06/19 1.6s} Rg8 {6.1s} 8. Nc3 {+2.29/20 2.5s} Bg7 {5.8s}
+9. Bc2 {+2.61/18 0.70s} Rh8 {7.7s} 10. Bc1 {+2.78/19 1.7s} Rg8 {7.5s}
+11. O-O {+3.00/20 4.1s} Rh8 {7.5s} 12. Ba4 {+3.16/17 1.4s, Black loses on time}
+1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "9"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:31"]
+[GameEndTime "2025-11-30T00:16:39.914 PST"]
+[GameStartTime "2025-11-30T00:15:08.267 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. g3 {1.4s} c5 {-0.21/25 7.5s} 2. Nh3 {2.0s} Nc6 {+0.60/17 1.1s} 3. Ng1 {2.9s}
+h5 {+0.80/16 0.54s} 4. Nh3 {2.9s} e5 {+1.58/22 2.9s} 5. Ng1 {5.6s}
+h4 {+1.72/20 1.8s} 6. gxh4 {2.8s} d5 {+1.88/18 1.6s} 7. Nf3 {3.9s}
+e4 {+3.48/17 0.71s} 8. Ng1 {3.3s} Qxh4 {+4.32/19 1.3s} 9. Bg2 {5.2s}
+c4 {+4.93/22 4.5s} 10. Bf1 {7.6s} Be6 {+5.89/19 1.9s} 11. Bg2 {6.8s}
+Nf6 {+5.75/21 5.8s} 12. Kf1 {8.8s} Bc5 {+5.79/19 1.6s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "10"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:01:42"]
+[GameEndTime "2025-11-30T00:18:22.417 PST"]
+[GameStartTime "2025-11-30T00:16:39.915 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "27"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+[Variation "Brooklyn defense"]
+
+1. e4 {+0.33/22 3.8s} Nf6 {2.6s} 2. e5 {+0.68/18 1.4s} Ng8 {2.1s}
+3. d4 {+1.11/19 1.7s} Nc6 {4.3s} 4. Nc3 {+1.08/21 7.1s} Rb8 {5.6s}
+5. Bd3 {+1.62/18 1.2s} Nxd4 {5.6s} 6. Be4 {+0.93/19 3.1s} Nc6 {3.0s}
+7. Bf4 {-0.03/17 3.2s} Nh6 {6.0s} 8. Bxh6 {+1.28/17 2.1s} gxh6 {4.2s}
+9. f4 {+0.85/17 3.2s} e6 {5.2s} 10. Bxc6 {+0.73/15 1.3s} bxc6 {3.2s}
+11. Qh5 {-0.88/18 4.6s} Rxb2 {5.8s} 12. Nf3 {-2.20/17 1.2s} Rxc2 {6.3s}
+13. Ng5 {-2.29/19 2.2s} hxg5 {4.5s} 14. O-O {-3.65/19 2.1s, Black loses on time}
+1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "1"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:15"]
+[GameEndTime "2025-11-30T00:54:46.731 PST"]
+[GameStartTime "2025-11-30T00:54:31.136 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "4"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+[Variation "reversed Alekhine"]
+
+1. g3 {1.5s} e5 {-0.19/19 1.5s} 2. Nf3 {4.2s}
+d6 {+0.36/17 0.95s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "2"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A45"]
+[GameDuration "00:00:14"]
+[GameEndTime "2025-11-30T00:55:00.909 PST"]
+[GameStartTime "2025-11-30T00:54:46.732 PST"]
+[Opening "Trompowsky attack (Ruth, Opovcensky Opening)"]
+[PlyCount "5"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. d4 {+0.32/17 0.63s} Nf6 {2.9s} 2. Bg5 {+0.23/18 0.55s} Ne4 {4.1s}
+3. h4 {+0.18/16 1.0s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "3"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:14"]
+[GameEndTime "2025-11-30T00:55:15.497 PST"]
+[GameStartTime "2025-11-30T00:55:00.910 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "6"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+[Variation "reversed Alekhine"]
+
+1. g3 {1.8s} e5 {-0.17/20 1.5s} 2. Nf3 {4.2s} e4 {+0.41/14 0.27s} 3. Ng1 {3.6s}
+Nf6 {+1.02/13 0.32s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "4"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:15"]
+[GameEndTime "2025-11-30T00:55:30.535 PST"]
+[GameStartTime "2025-11-30T00:55:15.498 PST"]
+[Opening "Van't Kruijs Opening"]
+[PlyCount "5"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. e3 {+0.32/17 0.59s} g6 {3.2s} 2. e4 {+0.32/17 0.66s} Nf6 {4.1s}
+3. Nc3 {+0.20/13 0.34s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "5"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:17"]
+[GameEndTime "2025-11-30T00:55:47.996 PST"]
+[GameStartTime "2025-11-30T00:55:30.536 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "6"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. g3 {1.8s} d5 {-0.17/20 1.5s} 2. Nf3 {3.6s} g6 {-0.16/15 0.30s} 3. Ng1 {3.9s}
+e5 {+0.66/14 0.31s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "6"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:00:15"]
+[GameEndTime "2025-11-30T00:56:03.366 PST"]
+[GameStartTime "2025-11-30T00:55:47.997 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "7"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+[Variation "Brooklyn defense"]
+
+1. e4 {+0.33/18 0.62s} Nf6 {3.4s} 2. e5 {+0.87/14 0.31s} Ng8 {2.7s}
+3. Nc3 {+1.11/15 0.54s} Nc6 {3.5s} 4. Nf3 {+1.07/16 0.97s, Black loses on time}
+1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "7"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:13"]
+[GameEndTime "2025-11-30T00:56:16.827 PST"]
+[GameStartTime "2025-11-30T00:56:03.367 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "6"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. g3 {1.7s} c5 {-0.17/21 1.5s} 2. Nh3 {2.5s} e6 {+0.58/12 0.23s} 3. Ng1 {3.8s}
+Be7 {+0.55/15 0.23s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "8"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:00:15"]
+[GameEndTime "2025-11-30T00:56:32.330 PST"]
+[GameStartTime "2025-11-30T00:56:16.828 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "7"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+[Variation "Brooklyn defense"]
+
+1. e4 {+0.32/19 1.4s} Nf6 {3.3s} 2. e5 {+0.64/13 0.34s} Ng8 {2.6s}
+3. Nc3 {+1.16/17 0.74s} Nc6 {3.6s} 4. Nf3 {+1.02/12 0.23s, Black loses on time}
+1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "9"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:17"]
+[GameEndTime "2025-11-30T00:56:49.482 PST"]
+[GameStartTime "2025-11-30T00:56:32.331 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "6"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+[Variation "reversed Alekhine"]
+
+1. g3 {1.7s} e5 {-0.22/20 1.5s} 2. Nf3 {4.1s} e4 {+0.29/17 0.94s} 3. Ng1 {3.4s}
+d5 {+0.49/15 0.29s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "10"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:00:13"]
+[GameEndTime "2025-11-30T00:57:02.973 PST"]
+[GameStartTime "2025-11-30T00:56:49.484 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "5"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. e4 {+0.33/18 0.62s} Nf6 {3.4s} 2. Bd3 {+0.87/14 0.28s} Nc6 {3.3s}
+3. Nc3 {-0.16/19 1.6s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "1"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:12"]
+[GameEndTime "2025-11-30T00:57:52.892 PST"]
+[GameStartTime "2025-11-30T00:57:39.918 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "6"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. g3 {1.4s} c6 {-0.17/20 1.5s} 2. Nh3 {2.8s} g6 {+0.32/14 0.27s} 3. Ng1 {2.5s}
+d6 {+0.48/14 0.22s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "2"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A45"]
+[GameDuration "00:00:16"]
+[GameEndTime "2025-11-30T00:58:09.428 PST"]
+[GameStartTime "2025-11-30T00:57:52.894 PST"]
+[Opening "Trompowsky attack (Ruth, Opovcensky Opening)"]
+[PlyCount "5"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. d4 {+0.32/17 0.63s} Nf6 {2.9s} 2. Bg5 {+0.23/18 0.54s} Ne4 {4.1s}
+3. Bf4 {+0.18/16 1.0s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "3"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:00:13"]
+[GameEndTime "2025-11-30T00:58:23.063 PST"]
+[GameStartTime "2025-11-30T00:58:09.429 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "4"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+[Variation "reversed Alekhine"]
+
+1. g3 {1.8s} e5 {-0.17/20 1.5s} 2. Nf3 {4.2s}
+Bd6 {+0.33/14 0.33s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "4"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "A10"]
+[GameDuration "00:00:13"]
+[GameEndTime "2025-11-30T00:58:36.952 PST"]
+[GameStartTime "2025-11-30T00:58:23.065 PST"]
+[Opening "English Opening"]
+[PlyCount "5"]
+[Termination "time forfeit"]
+[TimeControl "10+0.1"]
+
+1. c4 {+0.32/17 0.62s} g6 {2.1s} 2. d4 {+0.38/16 0.68s} Nf6 {4.1s}
+3. Nc3 {+0.38/17 1.1s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "1"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:07:49"]
+[GameEndTime "2025-11-30T01:07:53.262 PST"]
+[GameStartTime "2025-11-30T01:00:03.614 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "46"]
+[TimeControl "300+5"]
+[Variation "reversed Alekhine"]
+
+1. g3 {0.72s} e5 {-0.18/37 99s} 2. Nf3 {2.0s} Nc6 {+0.36/30 17s} 3. Nh4 {3.0s}
+d5 {+1.08/24 7.6s} 4. Nc3 {3.9s} Be7 {+2.27/28 17s} 5. Nf3 {3.0s}
+d4 {+2.37/30 38s} 6. Nb5 {2.5s} Nf6 {+2.76/30 36s} 7. Bg2 {3.9s}
+a6 {+2.14/28 26s} 8. Na3 {1.7s} e4 {+2.17/27 14s} 9. Ng5 {2.6s}
+Ng4 {+2.34/31 46s} 10. Nxe4 {3.5s} f5 {+2.09/25 18s} 11. h3 {7.7s}
+fxe4 {+3.52/26 30s} 12. hxg4 {2.2s} Bxa3 {+0.88/21 3.8s} 13. bxa3 {3.5s}
+Qe7 {-0.23/25 10s} 14. Rh4 {3.8s} g5 {+2.11/18 1.4s} 15. Rh6 {2.4s}
+O-O {+2.53/22 4.9s} 16. Bh3 {5.0s} Kg7 {+4.15/20 1.3s} 17. Rh5 {1.0s}
+Qf6 {+3.93/23 7.1s} 18. f3 {0.52s} Bd7 {+3.97/24 5.0s} 19. f4 {2.3s}
+gxf4 {+5.64/24 6.0s} 20. Rd5 {3.1s} fxg3 {+12.74/23 2.1s} 21. Rxd7+ {2.9s}
+Kg8 {+M7/245 0.056s} 22. Rg7+ {2.9s} Kxg7 {+M5/33 11s} 23. Bg2 {1.9s}
+Qf2# {+M1/74 2.1s, Black mates} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "2"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:15:20"]
+[GameEndTime "2025-11-30T01:23:13.591 PST"]
+[GameStartTime "2025-11-30T01:07:53.264 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "179"]
+[TimeControl "300+5"]
+
+1. e4 {+0.32/35 67s} Nf6 {1.8s} 2. Qe2 {+0.72/29 17s} Nc6 {2.6s}
+3. Nf3 {-0.22/28 21s} Rg8 {2.5s} 4. d4 {+2.04/25 8.2s} Rh8 {3.3s}
+5. e5 {+2.82/26 8.7s} Ng8 {2.6s} 6. d5 {+2.82/29 24s} Nb4 {1.7s}
+7. g3 {+2.92/30 28s} Nxd5 {2.3s} 8. Bg2 {+2.15/31 50s} Nb4 {3.6s}
+9. c4 {+2.24/25 14s} g6 {4.6s} 10. O-O {+2.07/30 55s} Bg7 {4.1s}
+11. Bf4 {+2.23/30 31s} Kf8 {7.0s} 12. Rd1 {+2.07/26 31s} Ke8 {7.5s}
+13. Rd2 {+2.76/21 5.0s} Kf8 {6.0s} 14. c5 {+2.73/24 9.4s} Ke8 {6.0s}
+15. h4 {+2.92/22 3.8s} Kf8 {6.3s} 16. a3 {+3.15/20 2.3s} Nc6 {4.4s}
+17. Qc4 {+3.03/24 8.7s} Nh6 {4.8s} 18. Bh3 {+3.35/18 1.6s} g5 {6.1s}
+19. hxg5 {+3.66/23 5.0s} Ng8 {4.1s} 20. Nc3 {+3.67/24 8.8s} Ke8 {6.9s}
+21. Nb5 {+6.14/20 2.7s} Kf8 {7.0s} 22. b4 {+6.18/23 5.2s} a6 {6.6s}
+23. Nc3 {+4.66/22 4.7s} a5 {7.8s} 24. b5 {+5.90/20 2.0s} Nb8 {6.7s}
+25. Rad1 {+6.28/23 10s} Ke8 {6.5s} 26. Nd5 {+7.93/18 0.93s} Kf8 {5.2s}
+27. b6 {+8.22/22 5.2s} c6 {4.3s} 28. Nc3 {+7.69/21 4.5s} Ke8 {7.5s}
+29. Bg2 {+8.08/21 3.3s} Kf8 {6.3s} 30. e6 {+6.78/22 11s} fxe6 {6.4s}
+31. Bc7 {+7.22/19 2.3s} Qe8 {3.1s} 32. Qf4+ {+6.80/21 8.3s} Qf7 {0.51s}
+33. Qc4 {+6.36/20 2.3s} d5 {5.5s} 34. cxd6 {+6.64/23 4.3s} Ke8 {5.1s}
+35. dxe7 {+9.04/22 4.6s} Nd7 {8.7s} 36. Nh4 {+9.56/23 3.8s} Nxe7 {11s}
+37. Bf3 {+8.41/23 6.9s} Ng6 {12s} 38. Bh5 {+7.94/21 3.5s} Rg8 {8.6s}
+39. Nxg6 {+9.35/21 2.9s} hxg6 {8.0s} 40. Ne4 {+9.62/20 2.0s} Bf8 {5.7s}
+41. Rxd7 {+10.92/22 3.7s} Bxd7 {4.5s} 42. Nf6+ {+10.48/23 9.3s} Qxf6
+43. gxf6 {+9.27/24 8.8s} gxh5 {2.9s} 44. Qd3 {+M23/42 1.5s} Bxa3 {1.2s}
+45. Qxd7+ {+M9/59 2.1s} Kf8 46. Qd3 {+M11/63 2.5s} Bc5 {2.1s}
+47. Qh7 {+M11/47 2.9s} Rc8 {1.5s} 48. Qh6+ {+M7/178 3.2s} Kf7
+49. Rd7+ {+M9/31 5.3s} Ke8 50. Rh7 {+M7/245 2.1s} Rxc7 {0.64s}
+51. Qxh5+ {+M7/131 3.9s} Kf8 52. Rh8 {+M7/124 4.0s} Bxb6 {0.66s}
+53. g4 {+M17/28 15s} Rxh8 54. Qxh8+ {+7.03/27 8.9s} Kf7 55. Qg7+ {+6.33/24 6.4s}
+Ke8 56. Qg8+ {+6.98/28 10s} Kd7 57. Qf8 {+7.01/21 2.8s} c5
+58. f7 {+7.28/23 4.4s} Rc8 59. Qg7 {+7.35/25 5.0s} Kd6 {1.5s}
+60. g5 {+6.62/24 3.7s} Rd8 {1.1s} 61. g6 {+8.83/22 3.3s} Rc8 {0.91s}
+62. f8=Q+ {+M25/21 1.6s} Rxf8 63. Qxf8+ {+M21/28 7.9s} Kd7
+64. Qg7+ {+M13/51 2.1s} Kd8 65. Qb2 {+M11/71 2.5s} Ke7 66. Kg2 {+M17/49 3.1s}
+Bd8 67. Qg7+ {+M13/51 3.2s} Kd6 68. Qxb7 {+M15/50 3.5s} Bf6 {0.52s}
+69. Qf7 {+M45/43 9.3s} Be5 {0.65s} 70. Kf3 {+M37/41 6.9s} Kc6 {0.52s}
+71. g7 {+M13/43 2.1s} Bxg7 {0.58s} 72. Qxe6+ {+M33/31 9.9s} Kc7
+73. Ke4 {+M13/35 3.0s} Bh8 {0.52s} 74. Kd5 {+M11/74 2.7s} Bd4
+75. f4 {+M9/245 2.5s} Kb7 76. Qc6+ {+M9/245 2.6s} Kb8 77. f5 {+M7/245 0.48s} Ka7
+78. Qc8 {+M5/245 0.49s} Kb6 79. Qe6+ {+M5/245 3.0s} Kb7 80. Qd7+ {+M9/245 3.1s}
+Kb6 81. Qd6+ {+M7/245 2.4s} Kb7 82. Qd7+ {+M9/245 2.0s} Kb6
+83. Qc6+ {+M7/245 1.6s} Ka7 84. Qc7+ {+M5/245 0.16s} Ka8
+85. Qc8+ {+M3/245 0.10s} Ka7 86. Qc7+ {+M3/245 0.056s} Ka8
+87. Qh7 {+M3/245 0.080s} Kb8 88. Qd7 {+M5/245 0.10s} Be5 89. Kc6 {+M5/245 0.13s}
+Ka8 90. Qb7# {+M1/245 0.018s, White mates} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "3"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:26:08"]
+[GameEndTime "2025-11-30T01:49:21.959 PST"]
+[GameStartTime "2025-11-30T01:23:13.594 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "29"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+[Variation "reversed Alekhine"]
+
+1. g3 {0.97s} e5 {-0.21/35 53s} 2. Nf3 {2.3s} Nc6 {+0.13/29 19s} 3. Nh4 {3.5s}
+g5 {+1.06/25 8.6s} 4. Nf5 {2.3s} d5 {+2.15/25 8.2s} 5. Bh3 {2.4s}
+Nge7 {+4.32/25 23s} 6. g4 {1.6s} h5 {+3.48/28 19s} 7. Nxe7 {2.0s}
+Nxe7 {+3.52/31 29s} 8. Bg2 {2.3s} Qd7 {+3.22/27 27s} 9. gxh5 {4.6s}
+c6 {+2.93/27 25s} 10. e4 {4.8s} f5 {+0.91/30 95s} 11. exf5 {3.5s}
+Nxf5 {+2.20/20 4.4s} 12. Qe2 {13s} Qe7 {+3.94/21 7.5s} 13. Bf1 {17s}
+Nd4 {+4.86/22 6.5s} 14. Qd1 {6.8s} e4 {+5.61/30 38s}
+15. Bg2 {110s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "4"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "0-1"]
+[ECO "A10"]
+[GameDuration "00:10:13"]
+[GameEndTime "2025-11-30T01:59:35.287 PST"]
+[GameStartTime "2025-11-30T01:49:22.021 PST"]
+[Opening "English Opening"]
+[PlyCount "4"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+
+1. c4 {+0.39/26 29s} g6 {2.7s} 2. Nf3 {+0.35/16 273s}
+Nh6 {4.5s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "5"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:09:54"]
+[GameEndTime "2025-11-30T02:09:29.438 PST"]
+[GameStartTime "2025-11-30T01:59:35.349 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "3"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+[Variation "reversed Alekhine"]
+
+1. g3 {2.4s} e5 {-0.22/23 291s} 2. Nf3 {7.1s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "6"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "1-0"]
+[ECO "B02"]
+[GameDuration "00:21:10"]
+[GameEndTime "2025-11-30T02:30:40.441 PST"]
+[GameStartTime "2025-11-30T02:09:29.507 PST"]
+[Opening "Alekhine's defense"]
+[PlyCount "3"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+
+1. e4 {+0.34/23 300s} Nf6 {5.0s} 2. Nc3 {+0.65/18 3.5s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "7"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[GameDuration "00:15:11"]
+[GameEndTime "2025-11-30T02:45:52.048 PST"]
+[GameStartTime "2025-11-30T02:30:40.443 PST"]
+[PlyCount "0"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+
+{White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "8"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "0-1"]
+[GameDuration "00:17:05"]
+[GameEndTime "2025-11-30T03:02:57.961 PST"]
+[GameStartTime "2025-11-30T02:45:52.049 PST"]
+[PlyCount "0"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+
+{White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "9"]
+[White "MinimaxBot"]
+[Black "Stockfish-L1"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:06:06"]
+[GameEndTime "2025-11-30T03:09:04.608 PST"]
+[GameStartTime "2025-11-30T03:02:58.021 PST"]
+[Opening "Benko's Opening"]
+[PlyCount "1"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+
+1. g3 {1.6s, Black loses on time} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.30"]
+[Round "10"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot"]
+[Result "0-1"]
+[GameDuration "00:17:27"]
+[GameEndTime "2025-11-30T03:26:31.961 PST"]
+[GameStartTime "2025-11-30T03:09:04.667 PST"]
+[PlyCount "0"]
+[Termination "time forfeit"]
+[TimeControl "300+5"]
+
+{White loses on time} 0-1
+

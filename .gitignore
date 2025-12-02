@@ -34,3 +34,4 @@ venv/
 *.njsproj
 *.sln
 *.sw?
+cutechess/
