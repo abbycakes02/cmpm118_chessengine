@@ -6,15 +6,16 @@ import numpy as np
 def fen_to_tensor(fen_str):
     """
     uses string parsing to convert a FEN string into a 20x8x8 PyTorch Tensor in a performant way.
+    performs board flipping, if its black to move, so that the perspective is always from white's side.
     input:
         fen_str: a FEN string
     output:
         torch.Tensor: A 20x8x8 tensor representing the board state
     """
-    PIECE_TO_CHANNEL = {
-        'P': 0, 'N': 1, 'B': 2, 'R': 3, 'Q': 4, 'K': 5,  # white pieces
-        'p': 6, 'n': 7, 'b': 8, 'r': 9, 'q': 10, 'k': 11  # black pieces
-    }
+
+    FRIENDLY_INDICES = {'P': 0, 'N': 1, 'B': 2, 'R': 3, 'Q': 4, 'K': 5}
+    ENEMY_INDICES = {'p': 6, 'n': 7, 'b': 8, 'r': 9, 'q': 10, 'k': 11}
+
     # split the FEN string into its components
     parts = fen_str.split()
     board_part = parts[0]
@@ -24,40 +25,69 @@ def fen_to_tensor(fen_str):
     halfmove_clock = int(parts[4])
     fullmove_number = int(parts[5])
 
+    is_black_to_move = (side_to_move == 'b')
+
     tensor = np.zeros((20, 8, 8), dtype=np.float32)
 
     # iterate over the board part to fill in piece positions
     # channels 0-11: piece positions
-    row = 0
-    col = 0
-    for char in board_part:
-        if char == '/':
-            row += 1
-            col = 0
-        elif char.isdigit():
-            # empty squares
-            col += int(char)
-        else:
-            channel = PIECE_TO_CHANNEL[char]
-            tensor[channel, row, col] = 1.0
-            col += 1
+    rows = board_part.split('/')
 
-    # channel 12: side to move
-    # 1.0 for white, 0.0 for black
-    if side_to_move == 'w':
-        tensor[12, :, :].fill(1.0)
+    if is_black_to_move:
+        rows = rows[::-1]  # reverse for black to move
+
+    for r, row in enumerate(rows):
+        col = 0
+        for char in row:
+            if char.isdigit():
+                col += int(char)
+            else:
+                # Friendly pieces are treated as white, and get placed in channels 0-5
+                # Enemy pieces are treated as black, and get placed in channels 6-11
+                if is_black_to_move:
+                    # if its black's turn, flip the board to pretend its the white player
+                    if char.islower():  # friendly
+                        idx = FRIENDLY_INDICES[char.upper()]
+                    else:  # enemy
+                        idx = ENEMY_INDICES[char.lower()]
+                else:
+                    # white turn no need to flip
+                    if char.isupper():  # friendly
+                        idx = FRIENDLY_INDICES[char]
+                    else:  # enemy
+                        idx = ENEMY_INDICES[char]
+
+                tensor[idx, r, col] = 1.0
+                col += 1
+
+    # channel 12: side to move (now redundant, but kept for compatibility)
+    # always "your turn" because black is recolord
+    tensor[12, :, :].fill(1.0)
 
     # channels 13-16: castling rights
-    # check white king and queenside
-    if 'K' in castling_rights:
-        tensor[13, :, :].fill(1.0)
-    if 'Q' in castling_rights:
-        tensor[14, :, :].fill(1.0)
-    # check black king and queenside
-    if 'k' in castling_rights:
-        tensor[15, :, :].fill(1.0)
-    if 'q' in castling_rights:
-        tensor[16, :, :].fill(1.0)
+    # 13: friendly king, 14: friendly queen, 15: enemy king, 16: enemy queen
+    if is_black_to_move:
+        # friendly/black channels
+        if 'k' in castling_rights:
+            tensor[13, :, :].fill(1.0)
+        if 'q' in castling_rights:
+            tensor[14, :, :].fill(1.0)
+        # enemy/white channels
+        if 'K' in castling_rights:
+            tensor[15, :, :].fill(1.0)
+        if 'Q' in castling_rights:
+            tensor[16, :, :].fill(1.0)
+    else:
+        # friendly/white channels
+        if 'K' in castling_rights:
+            tensor[13, :, :].fill(1.0)
+        if 'Q' in castling_rights:
+            tensor[14, :, :].fill(1.0)
+        # enemy channels
+        if 'k' in castling_rights:
+            tensor[15, :, :].fill(1.0)
+        if 'q' in castling_rights:
+            tensor[16, :, :].fill(1.0)
 
     # channel 17: en passant target square
     if en_passant != '-':
@@ -67,7 +97,13 @@ def fen_to_tensor(fen_str):
         file_char = en_passant[0]
         rank_char = en_passant[1]
         file_col = ord(file_char) - ord('a')
-        rank_row = 8 - int(rank_char)  # ranks go from 1-8
+        rank_row = int(rank_char) - 1  # prep for 0 indexing
+
+        if is_black_to_move:
+            rank_row = rank_row
+        else:
+            rank_row = 7 - rank_row
+
         tensor[17, rank_row, file_col] = 1.0
 
     # channel 18: 50-move rule counter (halfmove clock)

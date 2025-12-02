@@ -32,6 +32,12 @@ class ChessDataset(Dataset):
         row = self.data.iloc[idx]
         fen_str = row["fen"]
         result = row["result"]
+
+        turn = fen_str.split()[1]
+        if turn == 'b':
+            # if its black to move, flip the result
+            result = -result
+
         tensor = fen_to_tensor(fen_str)
         # tensor: (20, 8, 8)
 
