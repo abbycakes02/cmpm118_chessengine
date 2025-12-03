@@ -1,0 +1,78 @@
+[Event "Checkpoint Benchmark"]
+[Site "Local"]
+[Date "2025.12.02"]
+[Round "1"]
+[White "MinimaxBot-chess_valuenet_64ch_3resblocks"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[TimeControl "300+5"]
+[Termination "checkmate"]
+[PlyCount "74"]
+
+1. c3 c6 2. b3 a5 3. d3 Nf6 4. Bg5 d5 5. f3 e5 6. c4 Qb6 7. Bh6 gxh6 8. Qc2 Na6 9. Kd1 Be7 10. d4 Qd8 11. Nd2 exd4 12. Qxh7 Nxh7 13. Ne4 Nc5 14. Rc1 dxc4 15. Rc3 Rg8 16. Nd6+ Kd7 17. Re3 Bxd6 18. Re7+ Qxe7 19. a4 Qf6 20. e4 Kd8 21. Bd3 h5 22. g4 Qg7 23. h4 Qf6 24. Rh2 Nxd3 25. Rb2 hxg4 26. Nh3 Be5 27. b4 Rb8 28. fxg4 Rg6 29. Nf4 Nf2+ 30. Kd2 Nd3 31. Ne6+ Qxe6 32. Ke2 Rxg4 33. Kf1 Qf6+ 34. Ke2 Rg2+ 35. Kd1 Qf3+ 36. Re2 Qf1+ 37. Kc2 Qc1# 0-1
+
+[Event "Checkpoint Benchmark"]
+[Site "Local"]
+[Date "2025.12.02"]
+[Round "2"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot-chess_valuenet_64ch_3resblocks"]
+[Result "1-0"]
+[TimeControl "300+5"]
+[Termination "checkmate"]
+[PlyCount "69"]
+
+1. d4 e6 2. e3 Qf6 3. Nc3 Qh6 4. Nf3 b5 5. a4 b4 6. Nb5 Na6 7. h3 Rb8 8. Bd3 b3 9. c3 Qh5 10. Qxb3 Nf6 11. Nxc7+ Kd8 12. Nb5 Nb4 13. Be2 Nc2+ 14. Qxc2 Qf5 15. Qxf5 Be7 16. Qf4 Rxb5 17. Ne5 Ba6 18. Nxf7+ Ke8 19. axb5 Kxf7 20. Rxa6 Bd6 21. Qf3 Be7 22. Qxf6+ Bxf6 23. Rxa7 Rd8 24. Kd1 Ke7 25. e4 Bxd4 26. Rc7 Bxf2 27. b6 Bxb6 28. Rb7 Ra8 29. Rf1 Bg1 30. Rxg1 Ra1 31. e5 Rb1 32. Ba6 Ra1 33. Rf1 Rxa6 34. Bg5+ Ke8 35. Rb8# 1-0
+
+[Event "Checkpoint Benchmark"]
+[Site "Local"]
+[Date "2025.12.02"]
+[Round "3"]
+[White "MinimaxBot-chess_valuenet_64ch_3resblocks"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[TimeControl "300+5"]
+[Termination "checkmate"]
+[PlyCount "32"]
+
+1. c3 e5 2. Qa4 Nf6 3. Qxd7+ Nfxd7 4. c4 Bd6 5. f4 Nc6 6. h3 exf4 7. g3 Kf8 8. Kd1 Nd4 9. a3 Nc2 10. d3 Ne3+ 11. Kd2 Nxc4+ 12. Kc3 Nce5 13. Kd4 Bc5+ 14. Kd5 c6+ 15. Ke4 Qg5 16. Rh2 Nf6# 0-1
+
+[Event "Checkpoint Benchmark"]
+[Site "Local"]
+[Date "2025.12.02"]
+[Round "4"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot-chess_valuenet_64ch_3resblocks"]
+[Result "0-1"]
+[TimeControl "300+5"]
+[Termination "checkmate"]
+[PlyCount "100"]
+
+1. e3 h5 2. Nc3 g6 3. Nf3 Bh6 4. d4 Nf6 5. Bd3 Nc6 6. d5 Nb4 7. e4 Bg7 8. Bg5 O-O 9. Nd4 Nh7 10. Be3 c6 11. O-O cxd5 12. a4 Nc6 13. Bb5 dxe4 14. Nxe4 Nxd4 15. Bxd4 d5 16. Nc3 e6 17. f4 h4 18. Ne2 Bxd4+ 19. Qxd4 a6 20. Bd3 Qf6 21. g4 Qxd4+ 22. Nxd4 Bd7 23. c3 Rac8 24. Nf3 Rfd8 25. g5 d4 26. cxd4 Bc6 27. Ne5 Rxd4 28. a5 Rcd8 29. Bc4 h3 30. Be2 Rb4 31. Rf2 Rxb2 32. Bxa6 Rb4 33. Bf1 Be4 34. Rc1 Ra4 35. Re2 Bf5 36. Rc4 Rxa5 37. Re3 b5 38. Rc1 b4 39. Bxh3 Bxh3 40. Rxh3 Nxg5 41. Re3 Kg7 42. fxg5 b3 43. Kf2 Rd2+ 44. Kg3 b2 45. Rc7 Rxe5 46. Rxe5 b1=Q 47. h4 Qd3+ 48. Kg4 Rg2+ 49. Kf4 Rf2+ 50. Kg4 Qf3# 0-1
+
+[Event "Checkpoint Benchmark"]
+[Site "Local"]
+[Date "2025.12.02"]
+[Round "5"]
+[White "MinimaxBot-chess_valuenet_64ch_3resblocks"]
+[Black "Stockfish-L1"]
+[Result "0-1"]
+[TimeControl "300+5"]
+[Termination "checkmate"]
+[PlyCount "26"]
+
+1. c3 e6 2. Qa4 c5 3. Qxd7+ Qxd7 4. d4 Nf6 5. Kd1 cxd4 6. b4 dxc3+ 7. Bd2 cxd2 8. Kc2 Ne4 9. Kb3 d1=Q+ 10. Kb2 Q7d4+ 11. Ka3 Q1d3+ 12. Ka4 b5+ 13. Ka5 Qd8# 0-1
+
+[Event "Checkpoint Benchmark"]
+[Site "Local"]
+[Date "2025.12.02"]
+[Round "6"]
+[White "Stockfish-L1"]
+[Black "MinimaxBot-chess_valuenet_64ch_3resblocks"]
+[Result "1-0"]
+[TimeControl "300+5"]
+[Termination "checkmate"]
+[PlyCount "71"]
+
+1. e3 h5 2. c4 h4 3. a3 Nf6 4. Nf3 g5 5. Nxg5 b5 6. cxb5 Rg8 7. Qf3 d5 8. Qf4 Bh6 9. Nxf7 Bxf4 10. Nxd8 Bd6 11. Nc6 Nxc6 12. bxc6 Rb8 13. b4 Ne4 14. Bb2 a5 15. b5 Nxf2 16. Kxf2 Rf8+ 17. Ke1 h3 18. Nc3 d4 19. exd4 Rf6 20. d5 Bc5 21. Ne4 hxg2 22. Bxg2 Rxb5 23. Bxf6 Bb6 24. Bg5 Rb3 25. Rc1 Ba6 26. Bf1 Rf3 27. Bh6 e6 28. dxe6 Bxf1 29. Rxf1 Rd3 30. Rf7 Rd4 31. Nf6+ Kd8 32. e7+ Kc8 33. Rf8+ Rd8 34. Be3 Kb8 35. exd8=Q+ Ka7 36. Qa8# 1-0
+

@@ -1,0 +1,28 @@
+[
+  {
+    "checkpoint": "/Users/abbykaur/Desktop/python-chess/cmpm118_chessengine/backend_engine/ml/models/session_1764415241/epoch_1.pth",
+    "checkpoint_name": "epoch_1",
+    "timestamp": "2025-12-02T04:09:44.309036",
+    "time_control": "60+2",
+    "levels": {
+      "1": {
+        "wins": 0,
+        "losses": 6,
+        "draws": 0,
+        "games": 6
+      },
+      "2": {
+        "wins": 0,
+        "losses": 6,
+        "draws": 0,
+        "games": 6
+      },
+      "3": {
+        "wins": 0,
+        "losses": 6,
+        "draws": 0,
+        "games": 6
+      }
+    }
+  }
+]
