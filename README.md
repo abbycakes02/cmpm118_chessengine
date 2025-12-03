@@ -16,7 +16,11 @@ This repo contains the techinal implementation of a chess engine for CMPM 118 at
 │   │   ├── pgn_parser.py
 │   │   └── tensor_converter.py
 │   ├── ml
+│   │   ├── models
+│   │   │   └── Saved Model Weights
 │   │   ├── model.py
+│   │   ├── inference.py
+│   │   ├── data_loader.py
 │   │   └── train.py
 │   ├── main.py
 │   └── requirements.txt

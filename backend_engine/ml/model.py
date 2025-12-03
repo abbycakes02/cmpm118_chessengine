@@ -1,6 +1,39 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from collections import deque
+import numpy as np
+
+
+class GameHistory():
+    """
+    uses a deque to store the history of game states for training purposes
+    deque is faster than list concatenation for appending and popping from both ends
+    """
+    def __init__(self, history_length=5, board_shape=(12, 8, 8)):
+        self.max_length = history_length
+        self.shape = board_shape
+        # pre-fill the deque with empty board states
+        init = [np.zeros(board_shape, dtype=np.float32) for _ in range(self.max_length)]
+        self.history = deque(init, maxlen=self.max_length)
+
+    def push(self, board_tensor):
+        """
+        pushes a new board state onto the history deque
+
+        Args:
+            board_tensor (numpy.ndarray): tensor representing the board state
+        """
+        self.history.append(board_tensor)
+
+    def get_history(self):
+        """
+        returns the current history as a single tensor
+
+        Returns:
+            torch.Tensor: tensor of shape (history_length, 12, 8, 8)
+        """
+        return np.concatenate(self.history, axis=0)
 
 
 class ResidualBlock(nn.Module):
