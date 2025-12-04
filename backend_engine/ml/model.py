@@ -58,28 +58,46 @@ class ChessValueNet(nn.Module):
     "probability of a white win" or the strength of the position
     """
 
-    def __init__(self, num_channels=64, num_residual_blocks=5):
+    def __init__(self, history_length=5, board_channels=12, hidden_channels=64, num_blocks=5):
+        """
+        initializes the Chess Value Network
+
+        Args:
+            history_length (int): number of past board states to include in the input
+            in_channels (int): number of input channels per board state
+            hidden_channels (int): number of channels in the hidden layers
+            num_blocks (int): number of residual blocks in the network
+        """
         super(ChessValueNet, self).__init__()
 
-        # first pass the input tensor through a conv layer to deepen the representation
+        # input size scales with history length
+        self.input_channels = history_length * board_channels
+
+        # first pass the input tensor through a conv layer
+        # extracts features from the input tensor and maps to
+        # a higher dimensional representation space
         self.conv = nn.Conv2d(
-            in_channels=20,
-            out_channels=num_channels,
+            in_channels=self.input_channels,
+            out_channels=hidden_channels,
             kernel_size=3,
             padding=1,
             bias=False
             )
-        self.bn = nn.BatchNorm2d(num_channels)
+        self.bn = nn.BatchNorm2d(hidden_channels)
 
         # create residual blocks
+        # residual blocks act as the brain, extracting deep features
+        # from the board representation and learning complex patterns
         self.residual_blocks = nn.ModuleList(
-            [ResidualBlock(num_channels) for _ in range(num_residual_blocks)]
+            [ResidualBlock(hidden_channels) for _ in range(num_blocks)]
         )
 
         # then flatten and pass through a linear layer to get a single scalar output
         # pass it through a 1x1 conv to flatten channels to 1
+        # effectively creates a weighted sum of the feature maps allowing
+        # the most important features to pass through
         self.conv_final = nn.Conv2d(
-            in_channels=num_channels,
+            in_channels=hidden_channels,
             out_channels=1,
             kernel_size=1,
             bias=False
@@ -89,10 +107,12 @@ class ChessValueNet(nn.Module):
 
         # and pass to two fully conneced linear layers to get final prediction
         # 1 x 8 x 8  ->  64
-        # the expand to 128 neruons for a better representation
+        # by squishing the represenation down to 64 neurons before prediction
+        # the model is forced to learn a smart representation as opposed to memorizing
+        # the expand to 256 neurons to allow the model a better representation for score
         # then finally squash back down to a scalar output
-        self.fc1 = nn.Linear(64, 128)
-        self.fc2 = nn.Linear(128, 1)
+        self.fc1 = nn.Linear(64, 256)
+        self.fc2 = nn.Linear(256, 1)
 
         # init weights
         self._init_weights()

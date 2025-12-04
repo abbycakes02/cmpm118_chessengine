@@ -39,7 +39,13 @@ class MinimaxEngine:
         self.nodes_searched = 0
         if use_nn and model_path is not None:
             try:
-                self.evaluator = ChessEvaluator(model_path, channels, blocks)
+                self.evaluator = ChessEvaluator(
+                    model_path=self.model_path,
+                    input_channels=12,
+                    hidden_channels=self.channels,
+                    blocks=self.blocks,
+                    history_length=5
+                    )
                 print("Neural network evaluator loaded successfully.")
             except Exception as e:
                 print(f"Failed to load neural network model: {e}")
@@ -86,9 +92,12 @@ class MinimaxEngine:
 
         if self.use_nn and self.evaluator is not None:
             # use neural network evaluator
-            eval_score = self.evaluator.evaluate_position(board)
+            fen = board.fen()
+            eval_score = self.evaluator.evaluate_position(fen)
+            # remove "hypothetical" last move from history
+            self.evaluator.pop_history()
             # convert from -1 to 1 range to centipawn scale
-            return int(eval_score * 20000)
+            return int(eval_score * 1000)
 
         # if were not using NN, use material score
         score = self.material_score(board)
@@ -185,6 +194,10 @@ class MinimaxEngine:
         """
         # construct pychess board
         board = chess.Board(fen)
+
+        # reset the history becuase we're starting a new search
+        if self.use_nn and self.evaluator is not None:
+            self.evaluator.reset_history()
 
         # check if game is over
         if board.is_game_over():
