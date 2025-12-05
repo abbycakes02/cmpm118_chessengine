@@ -98,7 +98,7 @@ class ChessNet(nn.Module):
             in_channels=hidden_channels,
             out_channels=2,
             kernel_size=1,
-            padding=1,
+            padding=0,
             bias=False
         )
         self.policy_bn = nn.BatchNorm2d(2)
