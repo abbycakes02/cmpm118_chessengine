@@ -50,7 +50,7 @@ class ResidualBlock(nn.Module):
         return output_tensor
 
 
-class ChessValueNet(nn.Module):
+class ChessNet(nn.Module):
     """
     Main Value Net Powering the chess engine
     the net takes the board state represented as a tensor
@@ -58,7 +58,7 @@ class ChessValueNet(nn.Module):
     "probability of a white win" or the strength of the position
     """
 
-    def __init__(self, history_length=5, board_channels=12, hidden_channels=64, num_blocks=5):
+    def __init__(self, vocab_size, history_length=5, board_channels=12, hidden_channels=64, num_blocks=5):
         """
         initializes the Chess Value Network
 
@@ -68,7 +68,7 @@ class ChessValueNet(nn.Module):
             hidden_channels (int): number of channels in the hidden layers
             num_blocks (int): number of residual blocks in the network
         """
-        super(ChessValueNet, self).__init__()
+        super(ChessNet, self).__init__()
 
         # input size scales with history length
         self.input_channels = history_length * board_channels
@@ -92,21 +92,32 @@ class ChessValueNet(nn.Module):
             [ResidualBlock(hidden_channels) for _ in range(num_blocks)]
         )
 
-        # then flatten and pass through a linear layer to get a single scalar output
-        # pass it through a 1x1 conv to flatten channels to 1
-        # effectively creates a weighted sum of the feature maps allowing
-        # the most important features to pass through
-        self.conv_final = nn.Conv2d(
+        # take the output of the residual blocks and pass it through the policy head
+        # similar to alpha zero, 2 channels keeps some spatial structure
+        self.policy_conv = nn.Conv2d(
+            in_channels=hidden_channels,
+            out_channels=2,
+            kernel_size=1,
+            padding=1,
+            bias=False
+        )
+        self.policy_bn = nn.BatchNorm2d(2)
+        # policy head fully connected layer to output move probabilities
+        fc_size = 2 * 8 * 8  # 2 channels, 8x8 board
+        self.policy_fc = nn.Linear(fc_size, vocab_size)
+
+        # then pass through the value head to get win probability
+        # final conv layer to reduce channels to 1 to extract a single value map
+        self.value_conv = nn.Conv2d(
             in_channels=hidden_channels,
             out_channels=1,
             kernel_size=1,
             bias=False
         )
         # conv_final: (batch_size, 1, 8, 8)
-        self.bn_final = nn.BatchNorm2d(1)
+        self.value_bn = nn.BatchNorm2d(1)
 
         # and pass to two fully conneced linear layers to get final prediction
-        # 1 x 8 x 8  ->  64
         # by squishing the represenation down to 64 neurons before prediction
         # the model is forced to learn a smart representation as opposed to memorizing
         # the expand to 256 neurons to allow the model a better representation for score
@@ -161,22 +172,30 @@ class ChessValueNet(nn.Module):
         for block in self.residual_blocks:
             x = block(x)
 
+        # policy head
+        p = self.policy_conv(x)
+        p = self.policy_bn(p)
+        p = F.relu(p)
+        # flatten for fully connected layer
+        p = p.view(p.size(0), -1)
+        policy_logits = self.policy_fc(p)
+
         # final conv layer to reduce channels to 1 to extract a single value map
         # (batch_size, num_channels, 8, 8) -> (batch_size, 1, 8, 8)
-        x = self.conv_final(x)
-        x = self.bn_final(x)
-        x = F.relu(x)
+        v = self.value_conv(x)
+        v = self.value_bn(v)
+        v = F.relu(v)
 
         # flatten the 1x8x8 to 64
         # (batch_size, 1, 8, 8) -> (batch_size, 64)
-        x = x.view(x.size(0), -1)
+        v = v.view(v.size(0), -1)
 
         # pass through fully connected layers to get final scalar output
         # (batch_size, 64) -> (batch_size, 128) -> (batch_size, 1)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.fc2(x)
+        v = self.fc1(v)
+        v = F.relu(v)
+        value = self.fc2(v)
         # scale output to win probability between -1 and 1 using tanh
-        win_probs = torch.tanh(x)
+        win_probs = torch.tanh(value)
 
-        return win_probs
+        return policy_logits, win_probs
