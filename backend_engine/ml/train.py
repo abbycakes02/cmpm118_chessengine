@@ -10,8 +10,9 @@ import os
 import csv
 import argparse
 
-from .model import ChessValueNet
+from .model import ChessNet
 from .data_loader import get_train_test_loaders
+from .vocab import VOCAB_SIZE
 
 # --- Config ---
 # double dirname to get to the backend_engine directory
@@ -86,7 +87,8 @@ def train(data_dir=DATA_DIR, batch_size=BATCH_SIZE, epochs=EPOCHS):
         writer.writerow(["timestamp", "epoch", "chunk", "train_loss", "val_loss", "lr"])
 
     # Initialize the model, loss function, and optimizer
-    model = ChessValueNet(
+    model = ChessNet(
+        vocab_size=VOCAB_SIZE,
         history_length=HISTORY_LENGTH,
         board_channels=BOARD_CHANNELS,
         hidden_channels=NUM_CHANNELS,
@@ -107,7 +109,8 @@ def train(data_dir=DATA_DIR, batch_size=BATCH_SIZE, epochs=EPOCHS):
         if not RESUME_MODEL_PATH or not os.path.exists(RESUME_MODEL_PATH):
             print(f"Resume model path specified but file not found: {RESUME_MODEL_PATH}")
 
-    criterion = nn.MSELoss()
+    value_criterion = nn.MSELoss()
+    policy_criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=MAX_LR, weight_decay=1e-4)
 
     # implement learning rate scheduler to reduce lr if validation loss plateaus
@@ -171,9 +174,11 @@ def train(data_dir=DATA_DIR, batch_size=BATCH_SIZE, epochs=EPOCHS):
             steps = 0
             chunk_start_time = time.time()
 
-            for inputs, targets in loader:
+            for inputs, value_targets, policy_targets in loader:
                 # move tensors to the configured device
-                inputs, targets = inputs.to(device), targets.to(device)
+                inputs = inputs.to(device)
+                value_targets = value_targets.to(device)
+                policy_targets = policy_targets.to(device)
 
                 # Zero the parameter gradients
                 optimizer.zero_grad()
@@ -181,8 +186,11 @@ def train(data_dir=DATA_DIR, batch_size=BATCH_SIZE, epochs=EPOCHS):
                 # check if using AMP, then use autocast to speed up training by using mixed precision where possible
                 with autocast(enabled=use_amp, device_type=amp_device, dtype=torch.float16):
                     # Forward pass
-                    outputs = model(inputs)
-                    loss = criterion(outputs, targets)
+                    policy_pred, value_pred = model(inputs)
+                    # compute combined loss
+                    value_loss = value_criterion(value_pred, value_targets)
+                    policy_loss = policy_criterion(policy_pred, policy_targets)
+                    loss = value_loss + policy_loss
 
                 # Backward pass and optimization with AMP scaler
                 scaler.scale(loss).backward()
@@ -236,13 +244,17 @@ def train(data_dir=DATA_DIR, batch_size=BATCH_SIZE, epochs=EPOCHS):
                 chunk_loss = 0.0
                 steps = 0
 
-                for inputs, targets in loader:
+                for inputs, value_targets, policy_targets in loader:
                     # move tensors to the configured device
-                    inputs, targets = inputs.to(device), targets.to(device)
+                    inputs = inputs.to(device)
+                    value_targets = value_targets.to(device)
+                    policy_targets = policy_targets.to(device)
 
                     # Forward pass
-                    outputs = model(inputs)
-                    loss = criterion(outputs, targets)
+                    policy_pred, value_pred = model(inputs)
+                    value_loss = value_criterion(value_pred, value_targets)
+                    policy_loss = policy_criterion(policy_pred, policy_targets)
+                    loss = value_loss + policy_loss
 
                     chunk_loss += loss.item()
                     steps += 1

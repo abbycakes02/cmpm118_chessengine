@@ -1,7 +1,7 @@
 import torch
 import os
 
-from backend_engine.ml.model import ChessValueNet
+from backend_engine.ml.model import ChessNet
 from backend_engine.ml.game_state import GameHistory
 
 
@@ -39,7 +39,7 @@ class ChessEvaluator():
         print(f"Loading model on device: {self.device}")
         print(f" Channels: {self.hidden_channels}, Residual Blocks: {self.blocks}")
 
-        self.model = ChessValueNet(
+        self.model = ChessNet(
             history_length=self.history_length,
             board_channels=self.input_channels,
             hidden_channels=self.hidden_channels,

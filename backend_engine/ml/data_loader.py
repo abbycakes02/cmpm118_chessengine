@@ -9,6 +9,7 @@ import gc
 import time
 
 from backend_engine.data_processing.tensor_converter import fen_to_tensor
+from backend_engine.ml.vocab import MOVE_TO_INT
 
 
 class ChessDataset(Dataset):
@@ -30,6 +31,7 @@ class ChessDataset(Dataset):
         self.results = self.data["result"].to_numpy()
         self.game_nums = self.data["game_num"].to_numpy()
         self.is_black = self.data["is_black"].to_numpy()
+        self.moves = self.data["move_uci"].to_numpy()
 
     def __len__(self):
         """Return the number of samples in the dataset"""
@@ -40,12 +42,21 @@ class ChessDataset(Dataset):
         result = self.results[idx]
         game_num = self.game_nums[idx]
         is_black = self.is_black[idx]
+        move_str = self.moves[idx]
+
+        # convert move to integer index
+        try:
+            move_idx = MOVE_TO_INT[move_str]
+        except KeyError:
+            move_idx = 0
 
         if is_black == 1:
             # if its black to move, flip the result
             result = -result
 
-        result = torch.tensor([result], dtype=torch.float32)
+        # create the result tensors for value and policy heads
+        value_result = torch.tensor([result], dtype=torch.float32)
+        policy_result = torch.tensor(move_idx, dtype=torch.long)
 
         # grab an appropriate amount of board states from the FEN string
         boards = []
@@ -62,7 +73,7 @@ class ChessDataset(Dataset):
         tensor = np.concatenate(boards, axis=0)
         tensor = torch.from_numpy(tensor).float()
 
-        return tensor, result
+        return tensor, value_result, policy_result
 
 
 def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False, history_length=5):
