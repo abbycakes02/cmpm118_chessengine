@@ -163,7 +163,6 @@ class ChessNet(nn.Module):
         """
         # initial conv layer to build representation space
         # (batch_size, 20, 8, 8) -> (batch_size, num_channels, 8, 8)
-        print(f"DEBUG: Input Shape is {board_tensors.shape}")
         x = self.conv(board_tensors)
         x = self.bn(x)
         x = F.relu(x)
