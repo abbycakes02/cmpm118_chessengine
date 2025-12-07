@@ -10,6 +10,7 @@ import os
 
 from api import routes_engine_access
 from engines.minimax_engine import MinimaxEngine
+from engines.transposition_table import TranspositionTable
 
 # double dirname to get to the backend_engine directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -28,6 +29,10 @@ async def lifespan(app: FastAPI):
     """
     print("Starting up Chess Engine Backend...")
     app.state.engines = {}
+
+    # Initialize Transposition Table
+    shared_tt = TranspositionTable(size=1000000)
+
     # Initialize Minimax Engine without neural net
     app.state.engines['minimax'] = MinimaxEngine(use_nn=False)
 
@@ -37,6 +42,7 @@ async def lifespan(app: FastAPI):
             app.state.engines['minimax_nn'] = MinimaxEngine(
                 use_nn=True,
                 model_path=MODEL_PATH,
+                tt=shared_tt,
                 channels=64,
                 blocks=3
                 )

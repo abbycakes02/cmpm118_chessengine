@@ -1,7 +1,7 @@
 from collections import deque
 import numpy as np
 
-from backend_engine.data_processing.tensor_converter import fen_to_tensor
+from data_processing.tensor_converter import fen_to_tensor
 
 
 class GameHistory():

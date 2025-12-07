@@ -2,8 +2,8 @@ import torch
 import torch.nn.functional as F
 import os
 
-from backend_engine.ml.model import ChessNet
-from backend_engine.ml.game_state import GameHistory
+from ml.model import ChessNet
+from ml.game_state import GameHistory
 
 
 class ChessEvaluator():
@@ -41,7 +41,7 @@ class ChessEvaluator():
         print(f" Channels: {self.hidden_channels}, Residual Blocks: {self.blocks}")
 
         self.model = ChessNet(
-            vocab_size=4672,
+            vocab_size=4544,
             history_length=self.history_length,
             board_channels=self.input_channels,
             hidden_channels=self.hidden_channels,

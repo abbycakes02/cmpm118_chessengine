@@ -7,6 +7,7 @@ import chess.polyglot
 
 from ml.inference import ChessEvaluator
 from ml.vocab import MOVE_TO_INT
+from engines.transposition_table import TranspositionTable, FLAG_EXACT, FLAG_LOWERBOUND, FLAG_UPPERBOUND
 
 # piece values use UCI centipawn scoring
 # https://www.chessprogramming.org/Score
@@ -98,7 +99,7 @@ class MinimaxEngine:
     Minimax chess engine with alpha-beta pruning
     """
 
-    def __init__(self, use_nn=False, model_path=None, channels=64, blocks=5, max_depth=3, max_time=None, k_moves=5):
+    def __init__(self, use_nn=False, model_path=None, tt=None, channels=64, blocks=5, max_depth=3, max_time=None, k_moves=5):
         """
         initialize the minimax engine
 
@@ -121,12 +122,13 @@ class MinimaxEngine:
         self.evaluator = None
         self.nodes_searched = 0
         self.book_path = BOOK_FILENAME
+        self.tt = tt if tt is not None else TranspositionTable(size=1000000)
 
         if use_nn and model_path is not None:
             try:
                 self.evaluator = ChessEvaluator(
                     model_path=self.model_path,
-                    input_channels=12,
+                    input_channels=20,
                     hidden_channels=self.channels,
                     blocks=self.blocks,
                     history_length=5
@@ -252,7 +254,7 @@ class MinimaxEngine:
 
         return score
 
-    def sort_moves_by_evaluation(self, board, legal_moves):
+    def sort_moves_by_evaluation(self, board, legal_moves, debug=False):
         """
         run nn evaluator on the legal moves and sort the moves by probability
         """
@@ -272,9 +274,15 @@ class MinimaxEngine:
         move_probs.sort(key=lambda x: x[1], reverse=True)
         # return only the sorted moves
         sorted_moves = [move for move, _ in move_probs]
+
+        if debug:
+            top_3 = move_probs[:3]
+            moves_str = ", ".join([f"{m.uci()}({p:.2f})" for m, p in top_3])
+            print(f"   🧠 NN Policy Top 3: {moves_str}")
+
         return sorted_moves
 
-    def minimax(self, board, depth, alpha, beta, maximizing_player, stop_time):
+    def minimax(self, board, depth, alpha, beta, maximizing_player, stop_time, root_depth=0):
         """
         driving minimax engine behind the chess engine
         recursively explores legal moves until a certain depth,
@@ -294,9 +302,32 @@ class MinimaxEngine:
         self.nodes_searched += 1
 
         # check for timeout every 1000 nodes
-        if self.max_time is not None and self.nodes_searched % 1000 == 0:
+        if self.max_time is not None and self.nodes_searched % 100 == 0:
             if time.time() > stop_time:
                 raise TimeoutError("Minimax search timed out")
+
+        indent = " |  " * (root_depth)
+
+        # check transposition table for cached evaluation
+        tt_entry = self.tt.lookup(board)
+        tt_move = None
+
+        if tt_entry:
+            tt_move = tt_entry['move']
+            # check if we can use the cached score
+            if tt_entry['depth'] >= depth:
+                flag = tt_entry['flag']
+                score = tt_entry['score']
+                if flag == FLAG_EXACT:
+                    return score
+                elif flag == FLAG_LOWERBOUND:
+                    alpha = max(alpha, score)
+                elif flag == FLAG_UPPERBOUND:
+                    beta = min(beta, score)
+
+                # cut-off check to avoid unnecessary search
+                if alpha >= beta:
+                    return score
 
         # depth limit reached or game over, return evaluation of the board
         if depth == 0 or board.is_game_over():
@@ -305,55 +336,94 @@ class MinimaxEngine:
         # get all legal moves and explore them
         legal_moves = list(board.legal_moves)
 
+        # if we have a tt move, consider it first
+        if tt_move:
+            try:
+                move_obj = chess.Move.from_uci(tt_move)
+                if move_obj in legal_moves:
+                    legal_moves.remove(move_obj)
+                    legal_moves.insert(0, move_obj)
+            except Exception:
+                print("Invalid TT move UCI:", tt_move)
+                pass
+
         # if using nn evaluator, sort moves by probability and consider only top k moves
-        if self.use_nn and self.evaluator is not None:
-            sorted_moves = self.sort_moves_by_evaluation(board, legal_moves)
+        if self.use_nn and self.evaluator is not None and root_depth < 2:
+            # show_nn_info = (root_depth < 1)
+            sorted_moves = self.sort_moves_by_evaluation(board, legal_moves, debug=False)
+            if tt_move:
+                # ensure tt move is still first
+                move_obj = chess.Move.from_uci(tt_move)
+                if move_obj in sorted_moves:
+                    sorted_moves.remove(move_obj)
+                    sorted_moves.insert(0, move_obj)
             legal_moves = sorted_moves[:self.k_moves]
         else:
             # otherwise, sort moves to consider captures first for better pruning
             legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
 
         # maximizing player's turn
+        best_local_move = None
+        original_alpha = alpha
+
         if maximizing_player:
-            max_eval = -float('inf')  # init to negative infinity
+            value = -float('inf')  # init to negative infinity
             for move in legal_moves:
 
                 # make the first move
                 board.push(move)
                 # iterate down the tree for minimizing player
-                eval_score = self.minimax(board, depth - 1, alpha, beta, False, stop_time)
+                eval_score = self.minimax(board, depth - 1, alpha, beta, False, stop_time, root_depth=root_depth + 1)
                 # undo the move to restore board state
                 board.pop()
 
                 # update max_eval and alpha for pruning
-                max_eval = max(max_eval, eval_score)
-                alpha = max(alpha, eval_score)
+                if eval_score > value:
+                    value = eval_score
+                    best_local_move = move
+                    if root_depth == 0:
+                        # at root node, print the move being considered
+                        print(f"{indent} New best (white) move {move.uci()}, score: {eval_score}")
+                alpha = max(alpha, value)
 
                 # if the minimizing player is beating the maximizing player, abandon the branch
                 if beta <= alpha:
                     break  # Beta cut-off
-            # return the highest score found
-            return max_eval
         else:
             # minimizing player's turn
-            min_eval = float('inf')  # init to positive infinity
+            value = float('inf')  # init to positive infinity
             for move in legal_moves:
 
                 # make the first move
                 board.push(move)
                 # iterate down the tree for maximizing player
-                eval_score = self.minimax(board, depth - 1, alpha, beta, True, stop_time)
+                eval_score = self.minimax(board, depth - 1, alpha, beta, True, stop_time, root_depth=root_depth + 1)
                 # undo the move to restore board state
                 board.pop()
 
                 # update min_eval and beta for pruning
-                min_eval = min(min_eval, eval_score)
-                beta = min(beta, eval_score)
+                if eval_score < value:
+                    value = eval_score
+                    best_local_move = move
+                    if root_depth == 0:
+                        # at root node, print the move being considered
+                        print(f"{indent} New best (black) move {move.uci()}, score: {eval_score}")
+                beta = min(beta, value)
                 # if the minimizing player is beating the maximizing player, abandon the branch
                 if beta <= alpha:
                     break  # Alpha cut-off
-            # return the best lowest found
-            return min_eval
+
+        # store the evaluated position in the transposition table
+        tt_flag = FLAG_EXACT
+        if value <= original_alpha:
+            tt_flag = FLAG_UPPERBOUND
+        elif value >= beta:
+            tt_flag = FLAG_LOWERBOUND
+
+        move_str = best_local_move.uci() if best_local_move else None
+        self.tt.store(board, depth, value, tt_flag, move_str)
+
+        return value
 
     def get_book_move(self, board):
         try:
@@ -400,82 +470,33 @@ class MinimaxEngine:
             raise ValueError("Game is over")
 
         # start timer if time limit is set
-        stop_time = None
-        if time_limit is not None:
-            start_time = time.time()
-            stop_time = start_time + time_limit
-
+        stop_time = time.time() + time_limit if time_limit is not None else None
+        start_time = time.time()
         best_move = None
         self.nodes_searched = 0
         # if no max depth is provided rely on either the time limit or try to look 50 moves ahead
         max_depth = max_depth if max_depth is not None else 50
 
-        print(f"starting minimax using {'NN evaluator' if self.use_nn else 'material evaluator'}")
+        print(f"starting minimax using {'NN evaluator' if self.use_nn else 'material evaluator'}, tt size: {len(self.tt.table)}")
         print(f"Max Depth: {max_depth}, Time Limit: {time_limit} seconds")
 
         for curr_depth in range(1, max_depth + 1):
             print(f" Searching at depth {curr_depth}...")
             try:
-                # check if we're within a couple miliseconds of the time limit before starting a new depth
-                if stop_time and (time.time() > stop_time - 0.1):
-                    print(f"Approaching time limit, stopping search before depth {curr_depth}")
+                if stop_time and (time.time() > stop_time - 0.2):
+                    print("Time limit reached before starting depth", curr_depth)
                     break
 
-                curr_best_move = None
-                legal_moves = list(board.legal_moves)
-
-                # if using nn evaluator, sort moves by probability and consider only top k moves
-                if self.use_nn and self.evaluator is not None:
-                    legal_moves = self.sort_moves_by_evaluation(board, legal_moves)
-                    # dont prune moves at root
-                else:
-                    # otherwise, sort moves to consider captures first for better pruning
-                    legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
-
-                # check if a best move was found at the previous depth
-                # if so explore it first triggering the pruning to remove most other branches
-                if best_move is not None:
-                    print(f" Previous best move: {best_move.uci()}")
-                    # move the best move to the front of the list to explore it first
-                    legal_moves.remove(best_move)
-                    legal_moves.insert(0, best_move)
-                else:
-                    # sort root nodes to make pruining more efficient
-                    legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
-
-                # start search from root
                 if board.turn == chess.WHITE:
-                    # black is always the minimizing player
-                    max_eval = -float('inf')
-                    for move in legal_moves:
-                        # make first move
-                        board.push(move)
-                        # kick of minimax for black turn
-                        eval_score = self.minimax(board, curr_depth - 1, -float('inf'), float('inf'), False, stop_time)
-                        board.pop()
-
-                        # compare saved evaluation score to new score to find best move
-                        if eval_score > max_eval:
-                            max_eval = eval_score
-                            curr_best_move = move
+                    self.minimax(board, curr_depth, -float('inf'), float('inf'), True, stop_time, root_depth=0)
                 else:
-                    # white is always the maximizing player
-                    min_eval = float('inf')
-                    for move in legal_moves:
-                        # make first move
-                        board.push(move)
-                        # kick of minimax for white turn
-                        eval_score = self.minimax(board, curr_depth - 1, -float('inf'), float('inf'), True, stop_time)
-                        board.pop()
+                    self.minimax(board, curr_depth, -float('inf'), float('inf'), False, stop_time, root_depth=0)
 
-                        # compare saved evaluation score to new score to find best move
-                        if eval_score < min_eval:
-                            min_eval = eval_score
-                            curr_best_move = move
-                best_move = curr_best_move
-
-                print(f" Depth {curr_depth} best move: {best_move.uci()}, Nodes searched: {self.nodes_searched}, time elapsed: {time.time() - start_time:.2f} seconds")
-
+                # retrieve best move from transposition table
+                tt_entry = self.tt.lookup(board)
+                if tt_entry and tt_entry['move']:
+                    best_move = chess.Move.from_uci(tt_entry['move'])
+                    print(f" Depth {curr_depth} | Best: {best_move.uci()} | Score: {tt_entry['score']} | Nodes: {self.nodes_searched}, in {time.time() - start_time:.2f} seconds")
             except TimeoutError:
                 print(f"Time limit reached at depth {curr_depth}, stopping search.")
                 break
@@ -486,5 +507,5 @@ class MinimaxEngine:
             # fall back to first legal move
             best_move = list(board.legal_moves)[0]
 
-        print(f"Best Move: {best_move.uci()}")
+        print(f" Minimax picked move: {best_move.uci()}, in {time.time() - start_time:.2f} seconds, nodes searched: {self.nodes_searched}")
         return best_move.uci()
