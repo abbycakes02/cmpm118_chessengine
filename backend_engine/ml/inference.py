@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 import os
 
 from backend_engine.ml.model import ChessNet
@@ -40,6 +41,7 @@ class ChessEvaluator():
         print(f" Channels: {self.hidden_channels}, Residual Blocks: {self.blocks}")
 
         self.model = ChessNet(
+            vocab_size=4672,
             history_length=self.history_length,
             board_channels=self.input_channels,
             hidden_channels=self.hidden_channels,
@@ -75,8 +77,12 @@ class ChessEvaluator():
         tensor = torch.from_numpy(tensor).float().unsqueeze(0).to(self.device)
 
         with torch.no_grad():
-            prediction = self.model(tensor)
-            score = prediction.item()  # get scalar value
+            policy_logits, score = self.model(tensor)
+            policy_probs = F.softmax(policy_logits, dim=1).squeeze(0)
+            policy_probs = policy_probs.cpu().numpy()
+            score = score.item()
+
+            return policy_probs, score
 
         return score
 

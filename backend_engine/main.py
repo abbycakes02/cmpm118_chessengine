@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # one more time to get to the project root
 ROOT_DIR = os.path.dirname(BASE_DIR)
 MODEL_DIR = os.path.join(BASE_DIR, "ml", "models")
-MODEL_PATH = os.path.join(MODEL_DIR, "session_1764625687", "chess_valuenet_64ch_3resblocks.pth")
+MODEL_PATH = os.path.join(MODEL_DIR, "session_policy_head", "chess_valuenet_64ch_3resblocks.pth")
 
 
 @asynccontextmanager

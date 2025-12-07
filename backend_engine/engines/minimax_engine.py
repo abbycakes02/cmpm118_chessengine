@@ -6,6 +6,7 @@ import time
 import chess.polyglot
 
 from ml.inference import ChessEvaluator
+from ml.vocab import MOVE_TO_INT
 
 # piece values use UCI centipawn scoring
 # https://www.chessprogramming.org/Score
@@ -97,12 +98,18 @@ class MinimaxEngine:
     Minimax chess engine with alpha-beta pruning
     """
 
-    def __init__(self, use_nn=False, model_path=None, channels=64, blocks=5, max_depth=3, max_time=None):
+    def __init__(self, use_nn=False, model_path=None, channels=64, blocks=5, max_depth=3, max_time=None, k_moves=5):
         """
         initialize the minimax engine
 
         Args:
-            depth (int): depth to explore in the game tree
+            use_nn (bool): whether to use the neural network evaluator
+            model_path (str): path to the trained neural network model
+            channels (int): number of channels in the neural network
+            blocks (int): number of residual blocks in the neural network
+            max_depth (int): depth to explore in the game tree
+            max_time (float): maximum time to search in seconds
+            k_moves (int): number of top moves to consider at each step
         """
         self.use_nn = use_nn
         self.model_path = model_path
@@ -110,8 +117,10 @@ class MinimaxEngine:
         self.blocks = blocks
         self.max_depth = max_depth
         self.max_time = max_time
+        self.k_moves = k_moves
         self.evaluator = None
         self.nodes_searched = 0
+        self.book_path = BOOK_FILENAME
 
         if use_nn and model_path is not None:
             try:
@@ -125,8 +134,6 @@ class MinimaxEngine:
                 print("Neural network evaluator loaded successfully.")
             except Exception as e:
                 print(f"Failed to load neural network model: {e}")
-
-        self.book_path = BOOK_FILENAME
 
     def material_score(self, board):
         """
@@ -233,7 +240,7 @@ class MinimaxEngine:
         if self.use_nn and self.evaluator is not None:
             # use neural network evaluator
             fen = board.fen()
-            eval_score = self.evaluator.evaluate_position(fen)
+            _, eval_score = self.evaluator.evaluate_position(fen)
             # remove "hypothetical" last move from history
             self.evaluator.pop_history()
             # convert from -1 to 1 range to centipawn scale
@@ -244,6 +251,28 @@ class MinimaxEngine:
         score = self.better_eval_func(board)
 
         return score
+
+    def sort_moves_by_evaluation(self, board, legal_moves):
+        """
+        run nn evaluator on the legal moves and sort the moves by probability
+        """
+        policy_scores, _ = self.evaluator.evaluate_position(board.fen())
+        self.evaluator.pop_history()
+
+        move_probs = []
+        for move in legal_moves:
+            move_uci = move.uci()
+            if move_uci in MOVE_TO_INT:
+                move_index = MOVE_TO_INT[move_uci]
+                move_prob = policy_scores[move_index]
+            else:
+                move_prob = 0.0
+            move_probs.append((move, move_prob))
+        # sort moves by probability in descending order
+        move_probs.sort(key=lambda x: x[1], reverse=True)
+        # return only the sorted moves
+        sorted_moves = [move for move, _ in move_probs]
+        return sorted_moves
 
     def minimax(self, board, depth, alpha, beta, maximizing_player, stop_time):
         """
@@ -276,8 +305,13 @@ class MinimaxEngine:
         # get all legal moves and explore them
         legal_moves = list(board.legal_moves)
 
-        # sort moves to evaluate capture moves first to improve pruning
-        legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
+        # if using nn evaluator, sort moves by probability and consider only top k moves
+        if self.use_nn and self.evaluator is not None:
+            sorted_moves = self.sort_moves_by_evaluation(board, legal_moves)
+            legal_moves = sorted_moves[:self.k_moves]
+        else:
+            # otherwise, sort moves to consider captures first for better pruning
+            legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
 
         # maximizing player's turn
         if maximizing_player:
@@ -383,12 +417,20 @@ class MinimaxEngine:
             print(f" Searching at depth {curr_depth}...")
             try:
                 # check if we're within a couple miliseconds of the time limit before starting a new depth
-                if (time.time() - start_time) > time_limit * 0.9:
+                if stop_time and (time.time() > stop_time - 0.1):
                     print(f"Approaching time limit, stopping search before depth {curr_depth}")
                     break
 
                 curr_best_move = None
                 legal_moves = list(board.legal_moves)
+
+                # if using nn evaluator, sort moves by probability and consider only top k moves
+                if self.use_nn and self.evaluator is not None:
+                    legal_moves = self.sort_moves_by_evaluation(board, legal_moves)
+                    # dont prune moves at root
+                else:
+                    # otherwise, sort moves to consider captures first for better pruning
+                    legal_moves.sort(key=lambda move: board.is_capture(move), reverse=True)
 
                 # check if a best move was found at the previous depth
                 # if so explore it first triggering the pruning to remove most other branches
