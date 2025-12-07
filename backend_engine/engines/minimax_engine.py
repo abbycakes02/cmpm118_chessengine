@@ -302,7 +302,7 @@ class MinimaxEngine:
         self.nodes_searched += 1
 
         # check for timeout every 1000 nodes
-        if self.max_time is not None and self.nodes_searched % 100 == 0:
+        if stop_time and self.nodes_searched % 100 == 0:
             if time.time() > stop_time:
                 raise TimeoutError("Minimax search timed out")
 

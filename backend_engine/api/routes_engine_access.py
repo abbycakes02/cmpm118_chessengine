@@ -30,12 +30,12 @@ async def get_move(request: MoveRequest, req: Request):
         minimax = engines.get('minimax')
         if minimax is None:
             raise HTTPException(status_code=500, detail="Minimax engine not initialized.")
-        move = minimax.get_move(request.FEN, time_limit=3, max_depth=None)
+        move = minimax.get_move(request.FEN, time_limit=5, max_depth=None)
     elif request.engine == "minimax_nn":
         minimax_nn = engines.get('minimax_nn')
         if minimax_nn is None:
             raise HTTPException(status_code=500, detail="Minimax NN engine not initialized.")
-        move = minimax_nn.get_move(request.FEN, time_limit=3, max_depth=None)
+        move = minimax_nn.get_move(request.FEN, time_limit=5, max_depth=None)
     else:
         raise HTTPException(status_code=404, detail=f"{request.engine} engine not found.")
 
