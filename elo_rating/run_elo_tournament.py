@@ -24,14 +24,14 @@ STOCKFISH_PATH = shutil.which("stockfish")
 # STOCKFISH_PATH = "/usr/local/bin/stockfish"
 
 # Engine Settings
-USE_NN = True  # Set to True to test the Neural Network version
+USE_NN = False  # Set to True to test the Neural Network version
 MODEL_PATH = os.path.join(project_root, "backend_engine", "ml", "models", "session_1764582902", "chess_valuenet_32ch_3resblocks.pth") # 32 channels, 3 blocks
-MAX_DEPTH = 2   # Depth for your engine (reduced for NN - it's slower)
-TIME_LIMIT = 10 # Seconds per move for BOTH engines (fair comparison)
+MAX_DEPTH = 5   # Depth for your engine (use 5 for plain minimax, 2-3 for NN)
+TIME_LIMIT = 2 # Seconds per move for BOTH engines (fair comparison)
 
 # Tournament Settings
-GAMES_PER_LEVEL = 4  # More games = more accurate rating (10-20 recommended)
-STOCKFISH_LEVELS = [0, 1]  # Broader range to find competitive zone
+GAMES_PER_LEVEL = 1  # More games = more accurate rating (10-20 recommended)
+STOCKFISH_LEVELS = [1]  # Broader range to find competitive zone
 SAVE_PGN = True  # Save games to PGN file for analysis
 PGN_OUTPUT = os.path.join(current_dir, "minimax_vs_stockfish.pgn")
 
@@ -73,7 +73,7 @@ def play_game(my_engine, sf_engine, i_am_white, time_limit):
             if i_am_white:
                 # My Engine (White)
                 try:
-                    move_uci = my_engine.get_move(board.fen(), time_limit=time_limit)
+                    move_uci = my_engine.get_move(board.fen(), time_limit=time_limit, max_depth=MAX_DEPTH)
                     move = chess.Move.from_uci(move_uci)
                     if move not in board.legal_moves:
                         print(f"Error: Engine returned illegal move {move_uci}")
@@ -92,7 +92,7 @@ def play_game(my_engine, sf_engine, i_am_white, time_limit):
             if not i_am_white:
                 # My Engine (Black)
                 try:
-                    move_uci = my_engine.get_move(board.fen(), time_limit=time_limit)
+                    move_uci = my_engine.get_move(board.fen(), time_limit=time_limit, max_depth=MAX_DEPTH)
                     move = chess.Move.from_uci(move_uci)
                     if move not in board.legal_moves:
                         print(f"Error: Engine returned illegal move {move_uci}")

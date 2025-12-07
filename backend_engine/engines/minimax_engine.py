@@ -14,71 +14,75 @@ PIECE_VALUES = {
     chess.KING: 20000,  # arbitrary high value for king
 }
 
-# Piece-Square Tables (PST)
-# Defined visually (Rank 8 at top, Rank 1 at bottom)
-# These values are for White. For Black, we mirror the square lookup.
-PST = {
-    chess.PAWN: [
-         0,   0,   0,   0,   0,   0,   0,   0,
-        50,  50,  50,  50,  50,  50,  50,  50,
-        10,  10,  20,  30,  30,  20,  10,  10,
-         5,   5,  10,  25,  25,  10,   5,   5,
-         0,   0,   0,  20,  20,   0,   0,   0,
-         5,  -5, -10,   0,   0, -10,  -5,   5,
-         5,  10,  10, -20, -20,  10,  10,   5,
-         0,   0,   0,   0,   0,   0,   0,   0
-    ],
-    chess.KNIGHT: [
-        -50, -40, -30, -30, -30, -30, -40, -50,
-        -40, -20,   0,   0,   0,   0, -20, -40,
-        -30,   0,  10,  15,  15,  10,   0, -30,
-        -30,   5,  15,  20,  20,  15,   5, -30,
-        -30,   0,  15,  20,  20,  15,   0, -30,
-        -30,   5,  10,  15,  15,  10,   5, -30,
-        -40, -20,   0,   5,   5,   0, -20, -40,
-        -50, -40, -30, -30, -30, -30, -40, -50,
-    ],
-    chess.BISHOP: [
-        -20, -10, -10, -10, -10, -10, -10, -20,
-        -10,   0,   0,   0,   0,   0,   0, -10,
-        -10,   0,   5,  10,  10,   5,   0, -10,
-        -10,   5,   5,  10,  10,   5,   5, -10,
-        -10,   0,  10,  10,  10,  10,   0, -10,
-        -10,  10,  10,  10,  10,  10,  10, -10,
-        -10,   5,   0,   0,   0,   0,   5, -10,
-        -20, -10, -10, -10, -10, -10, -10, -20,
-    ],
-    chess.ROOK: [
-         0,   0,   0,   0,   0,   0,   0,   0,
-         5,  10,  10,  10,  10,  10,  10,   5,
-        -5,   0,   0,   0,   0,   0,   0,  -5,
-        -5,   0,   0,   0,   0,   0,   0,  -5,
-        -5,   0,   0,   0,   0,   0,   0,  -5,
-        -5,   0,   0,   0,   0,   0,   0,  -5,
-        -5,   0,   0,   0,   0,   0,   0,  -5,
-         0,   0,   0,   5,   5,   0,   0,   0
-    ],
-    chess.QUEEN: [
-        -20, -10, -10,  -5,  -5, -10, -10, -20,
-        -10,   0,   0,   0,   0,   0,   0, -10,
-        -10,   0,   5,   5,   5,   5,   0, -10,
-         -5,   0,   5,   5,   5,   5,   0,  -5,
-          0,   0,   5,   5,   5,   5,   0,  -5,
-        -10,   5,   5,   5,   5,   5,   0, -10,
-        -10,   0,   5,   0,   0,   0,   0, -10,
-        -20, -10, -10,  -5,  -5, -10, -10, -20
-    ],
-    chess.KING: [
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -20, -30, -30, -40, -40, -30, -30, -20,
-        -10, -20, -20, -20, -20, -20, -20, -10,
-         20,  20,   0,   0,   0,   0,  20,  20,
-         20,  30,  10,   0,   0,  10,  30,  20
-    ],
-}
+# Piece-square tables (2D format for readability, indexed by [rank][file])
+# Rank 0 = Rank 1 (white's back rank), Rank 7 = Rank 8 (black's back rank)
+PAWN_PST = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 10, 10, -20, -20, 10, 10, 5],
+    [5, -5, -10, 0, 0, -10, -5, 5],
+    [0, 0, 0, 20, 20, 0, 0, 0],
+    [5, 5, 10, 25, 25, 10, 5, 5],
+    [10, 10, 20, 30, 30, 20, 10, 10],
+    [50, 50, 50, 50, 50, 50, 50, 50],
+    [0, 0, 0, 0, 0, 0, 0, 0]
+]
+
+KNIGHT_PST = [
+    [-50, -40, -30, -30, -30, -30, -40, -50],
+    [-40, -20, 0, 0, 0, 0, -20, -40],
+    [-30, 0, 10, 15, 15, 10, 0, -30],
+    [-30, 5, 15, 20, 20, 15, 5, -30],
+    [-30, 0, 15, 20, 20, 15, 0, -30],
+    [-30, 5, 10, 15, 15, 10, 5, -30],
+    [-40, -20, 0, 5, 5, 0, -20, -40],
+    [-50, -40, -30, -30, -30, -30, -40, -50]
+]
+
+BISHOP_PST = [
+    [-20, -10, -10, -10, -10, -10, -10, -20],
+    [-10, 0, 0, 0, 0, 0, 0, -10],
+    [-10, 0, 5, 10, 10, 5, 0, -10],
+    [-10, 5, 5, 10, 10, 5, 5, -10],
+    [-10, 0, 10, 10, 10, 10, 0, -10],
+    [-10, 10, 10, 10, 10, 10, 10, -10],
+    [-10, 5, 0, 0, 0, 0, 5, -10],
+    [-20, -10, -10, -10, -10, -10, -10, -20]
+]
+
+ROOK_PST = [
+    [0, 0, 0, 5, 5, 0, 0, 0],
+    [-5, 0, 0, 0, 0, 0, 0, -5],
+    [-5, 0, 0, 0, 0, 0, 0, -5],
+    [-5, 0, 0, 0, 0, 0, 0, -5],
+    [-5, 0, 0, 0, 0, 0, 0, -5],
+    [-5, 0, 0, 0, 0, 0, 0, -5],
+    [5, 10, 10, 10, 10, 10, 10, 5],
+    [0, 0, 0, 0, 0, 0, 0, 0]
+]
+
+QUEEN_PST = [
+    [-20, -10, -10, -5, -5, -10, -10, -20],
+    [-10, 0, 0, 0, 0, 0, 0, -10],
+    [-10, 0, 5, 5, 5, 5, 0, -10],
+    [-5, 0, 5, 5, 5, 5, 0, -5],
+    [0, 0, 5, 5, 5, 5, 0, -5],
+    [-10, 5, 5, 5, 5, 5, 0, -10],
+    [-10, 0, 5, 0, 0, 0, 0, -10],
+    [-20, -10, -10, -5, -5, -10, -10, -20]
+]
+
+KING_PST = [
+    [20, 30, 10, 0, 0, 10, 30, 20],
+    [20, 20, 0, 0, 0, 0, 20, 20],
+    [-10, -20, -20, -20, -20, -20, -20, -10],
+    [-20, -30, -30, -40, -40, -30, -30, -20],
+    [-30, -40, -40, -50, -50, -40, -40, -30],
+    [-30, -40, -40, -50, -50, -40, -40, -30],
+    [-30, -40, -40, -50, -50, -40, -40, -30],
+    [-30, -40, -40, -50, -50, -40, -40, -30]
+]
+
+CENTER_SQUARES = [chess.D4, chess.D5, chess.E4, chess.E5]
 
 MATE_SCORE = 99999  # score for checkmate
 
@@ -112,30 +116,84 @@ class MinimaxEngine:
 
     def material_score(self, board):
         """
-        evaluate the board position using material count AND piece-square tables
+        Simple material evaluation (basic piece counting)
         """
         score = 0
-        
-        # Iterate over all squares to apply PSTs
-        for square in chess.SQUARES:
-            piece = board.piece_at(square)
-            if piece:
-                material_value = PIECE_VALUES[piece.piece_type]
-                
-                # Calculate PST bonus
-                # If piece is white, use square index directly (mapped to visual table via ^ 56)
-                # If piece is black, use square index directly (mapped to visual table via identity)
-                # Wait, the table is defined Rank 8 (index 0) to Rank 1 (index 63).
-                # White A1 is index 56. White A8 is index 0.
-                # square A1 is 0. 0^56 = 56. Correct.
-                # square A8 is 56. 56^56 = 0. Correct.
-                
-                if piece.color == chess.WHITE:
-                    score += material_value + PST[piece.piece_type][square ^ 56]
-                else:
-                    score -= material_value + PST[piece.piece_type][square]
-                    
+        for piece_type in PIECE_VALUES.keys():
+            score += PIECE_VALUES[piece_type] * len(board.pieces(piece_type, chess.WHITE))
+            score -= PIECE_VALUES[piece_type] * len(board.pieces(piece_type, chess.BLACK))
         return score
+
+    def better_eval_func(self, board):
+        """
+        Comprehensive evaluation function with:
+        - Material + Piece-Square Tables
+        - King safety (pawn shield)
+        - Pawn structure (isolated pawns)
+        - Center control bonuses
+        """
+        if board.is_checkmate():
+            return MATE_SCORE if board.turn == chess.BLACK else -MATE_SCORE
+        if board.is_game_over():
+            return 0
+
+        score = 0
+        
+        # Material + piece-square table evaluation
+        for piece_type, pst in [(chess.PAWN, PAWN_PST),
+                                (chess.KNIGHT, KNIGHT_PST),
+                                (chess.BISHOP, BISHOP_PST),
+                                (chess.ROOK, ROOK_PST),
+                                (chess.QUEEN, QUEEN_PST),
+                                (chess.KING, KING_PST)]:
+            for sq in board.pieces(piece_type, chess.WHITE):
+                row, col = divmod(sq, 8)
+                score += PIECE_VALUES[piece_type] + pst[row][col]
+            for sq in board.pieces(piece_type, chess.BLACK):
+                row, col = divmod(sq, 8)
+                score -= PIECE_VALUES[piece_type] + pst[7 - row][col]  # flip board for black
+
+        # King safety: penalize missing pawn shield
+        for color in [chess.WHITE, chess.BLACK]:
+            factor = 1 if color == chess.WHITE else -1
+            king_sq = board.king(color)
+            if king_sq is not None:
+                # Check pawn shield in front of king
+                for f in [chess.square_file(king_sq)-1, chess.square_file(king_sq), chess.square_file(king_sq)+1]:
+                    if 0 <= f <= 7:
+                        r = 1 if color == chess.WHITE else 6
+                        sq = chess.square(f, r)
+                        p = board.piece_at(sq)
+                        if not (p and p.piece_type == chess.PAWN and p.color == color):
+                            score -= factor * 10
+
+        # Pawn structure: penalize isolated pawns
+        for color in [chess.WHITE, chess.BLACK]:
+            factor = 1 if color == chess.WHITE else -1
+            pawns = board.pieces(chess.PAWN, color)
+            for sq in pawns:
+                file = chess.square_file(sq)
+                # Check for pawns on adjacent files
+                left = board.pieces(chess.PAWN, color) & chess.BB_FILES[file-1] if file > 0 else 0
+                right = board.pieces(chess.PAWN, color) & chess.BB_FILES[file+1] if file < 7 else 0
+                if left == 0 and right == 0:
+                    score -= factor * 15
+
+        # Center control: bonus for pieces controlling center squares
+        for color in [chess.WHITE, chess.BLACK]:
+            factor = 1 if color == chess.WHITE else -1
+            for sq in CENTER_SQUARES:
+                p = board.piece_at(sq)
+                if p and p.color == color:
+                    if p.piece_type == chess.KNIGHT:
+                        score += factor * 20
+                    elif p.piece_type == chess.BISHOP:
+                        score += factor * 10
+                    elif p.piece_type == chess.PAWN:
+                        score += factor * 5
+
+        return score
+
 
     def evaluate_board(self, board):
         """
@@ -162,11 +220,11 @@ class MinimaxEngine:
             # use neural network evaluator
             eval_score = self.evaluator.evaluate_position(board)
             # convert from -1 to 1 range to centipawn scale
-            # Scale to 1000 (10 pawns) so NN scores are comparable to material scores
-            return int(eval_score * 1000)
+            # Scale to 20000 for compatibility with improved eval function
+            return int(eval_score * 20000)
 
-        # if were not using NN, use material score
-        score = self.material_score(board)
+        # Use the improved evaluation function (material + PST + king safety + pawn structure + center control)
+        score = self.better_eval_func(board)
         return score
 
     def minimax(self, board, depth, alpha, beta, maximizing_player, stop_time):
@@ -245,7 +303,7 @@ class MinimaxEngine:
             # return the best lowest found
             return min_eval
 
-    def get_move(self, fen, time_limit=None, max_depth=None):
+    def get_move(self, fen, time_limit=None, max_depth=3):
         """
         runs the minimax engine to the specified depth and returns the best move in UCI format
         based on the minimax algorithm with alpha-beta pruning from Geeks for Geeks:
@@ -254,7 +312,7 @@ class MinimaxEngine:
         Args:
             fen (str): FEN string of the current board state
             time_limit (float, optional): Time limit in seconds for the search
-            max_depth (int, optional): Override depth to explore. Uses self.max_depth if None.
+            max_depth (int, optional): Depth to explore in the game tree. Defaults to 3.
 
         Returns:
             str: Best move in UCI format
@@ -275,9 +333,8 @@ class MinimaxEngine:
 
         best_move = None
         self.nodes_searched = 0
-        # Use instance max_depth if not explicitly provided, otherwise search to 50
-        if max_depth is None:
-            max_depth = self.max_depth if self.max_depth is not None else 50
+        # Use provided max_depth, or fallback to 50 if None is explicitly passed
+        max_depth = max_depth if max_depth is not None else 50
 
         print(f"starting minimax using {'NN evaluator' if self.use_nn else 'material evaluator'}")
         print(f"Max Depth: {max_depth}, Time Limit: {time_limit} seconds")
