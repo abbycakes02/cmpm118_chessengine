@@ -1,6 +1,10 @@
 import chess
 import time
 
+import os
+import random
+import chess.polyglot
+
 from ml.inference import ChessEvaluator
 
 # piece values use UCI centipawn scoring
@@ -16,6 +20,8 @@ PIECE_VALUES = {
 
 MATE_SCORE = 99999  # score for checkmate
 
+
+BOOK_FILENAME = "gm2001.bin"
 
 class MinimaxEngine:
     """
@@ -37,6 +43,7 @@ class MinimaxEngine:
         self.max_time = max_time
         self.evaluator = None
         self.nodes_searched = 0
+        
         if use_nn and model_path is not None:
             try:
                 self.evaluator = ChessEvaluator(
@@ -49,6 +56,10 @@ class MinimaxEngine:
                 print("Neural network evaluator loaded successfully.")
             except Exception as e:
                 print(f"Failed to load neural network model: {e}")
+
+        self.book_path = BOOK_FILENAME
+
+
 
     def material_score(self, board):
         """
@@ -179,6 +190,20 @@ class MinimaxEngine:
             # return the best lowest found
             return min_eval
 
+    def get_book_move(self, board):
+        try:
+            with chess.polyglot.open_reader(self.book_path) as reader:
+                entry = reader.find(board)
+                if entry is not None:
+                    # entry.move is a property, not a function
+                    return entry.move.uci()
+        except Exception as e:
+            print("Polyglot book read error:", e)
+        return None
+
+
+
+
     def get_move(self, fen, time_limit=None, max_depth=3):
         """
         runs the minimax engine to the specified depth and returns the best move in UCI format
@@ -199,6 +224,14 @@ class MinimaxEngine:
         if self.use_nn and self.evaluator is not None:
             self.evaluator.reset_history()
 
+        # OPENING BOOK CHECK
+        print("===Checking if Book move===")
+        book_move = self.get_book_move(board)
+        if book_move:
+            print("Using book move:", book_move)
+            return book_move
+
+        print("===Not a book move===")
         # check if game is over
         if board.is_game_over():
             print("Game is over")
