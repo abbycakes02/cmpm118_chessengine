@@ -26,12 +26,12 @@ STOCKFISH_PATH = shutil.which("stockfish")
 # Engine Settings
 USE_NN = False  # Set to True to test the Neural Network version
 MODEL_PATH = os.path.join(project_root, "backend_engine", "ml", "models", "session_1764582902", "chess_valuenet_32ch_3resblocks.pth") # 32 channels, 3 blocks
-MAX_DEPTH = 5   # Depth for your engine (use 5 for plain minimax, 2-3 for NN)
-TIME_LIMIT = 2 # Seconds per move for BOTH engines (fair comparison)
+MAX_DEPTH = 6   # Depth for your engine (use 5 for plain minimax, 2-3 for NN)
+TIME_LIMIT = 3 # Seconds per move for BOTH engines (fair comparison)
 
 # Tournament Settings
-GAMES_PER_LEVEL = 1  # More games = more accurate rating (10-20 recommended)
-STOCKFISH_LEVELS = [1]  # Broader range to find competitive zone
+GAMES_PER_LEVEL = 5  # More games = more accurate rating (10-20 recommended)
+STOCKFISH_LEVELS = [3,5,6]  # Broader range to find competitive zone
 SAVE_PGN = True  # Save games to PGN file for analysis
 PGN_OUTPUT = os.path.join(current_dir, "minimax_vs_stockfish.pgn")
 
@@ -201,8 +201,18 @@ def main():
         for i in range(GAMES_PER_LEVEL):
             i_am_white = (i % 2 == 0)
             
+            print(f"  > Playing Game {i+1}/{GAMES_PER_LEVEL} (Engine is {'White' if i_am_white else 'Black'})...", end=" ", flush=True)
+            
             game_score, pgn_game = play_game(my_engine, sf_engine, i_am_white, TIME_LIMIT)
             score += game_score
+            
+            # Print result immediately
+            if game_score == 1.0:
+                print("WIN")
+            elif game_score == 0.0:
+                print("LOSS")
+            else:
+                print("DRAW")
             
             if pgn_game and SAVE_PGN:
                 all_games.append(pgn_game)

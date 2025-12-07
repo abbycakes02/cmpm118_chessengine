@@ -7,7 +7,7 @@ Based on chess programming research and historical data:
 ### By Depth (with alpha-beta pruning, basic evaluation):
 - **Depth 3**: 1200-1500 ELO (Beginner to Class D)
 - **Depth 4**: 1400-1700 ELO (Class D to Class C)
-- **Depth 5**: 1600-1900 ELO (Class C to Class B)
+- **Depth 5**: ELO (Class C to Class B)
 - **Depth 6**: 1800-2100 ELO (Class B to Class A)
 - **Depth 7-8**: 2000-2300 ELO (Expert to Master)
 
@@ -27,7 +27,7 @@ Doubling time per move = ~50-70 ELO gain
 
 ### 3. **Evaluation Quality**
 - Basic material count: baseline
-- Piece-square tables: +100-200 ELO
+- Piece-square tables: +100-200 ELO1600-1900 
 - Advanced patterns (king safety, pawn structure): +200-400 ELO
 - Neural network evaluation: +300-500 ELO
 
