@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def plot_loss(log_file='../ml/models/session_1764625687/training_log.csv'):
+def plot_loss(log_file='../ml/models/session_policy_head/training_log.csv'):
     df = pd.read_csv(log_file)
 
     # Determine max chunk size (ignoring 'end')
