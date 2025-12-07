@@ -1,8 +1,8 @@
 import chess
 import time
 
-import os
-import random
+# import os
+# import random
 import chess.polyglot
 
 from ml.inference import ChessEvaluator
@@ -89,10 +89,8 @@ KING_PST = [
 
 CENTER_SQUARES = [chess.D4, chess.D5, chess.E4, chess.E5]
 
-
-
-
 BOOK_FILENAME = "gm2001.bin"
+
 
 class MinimaxEngine:
     """
@@ -114,7 +112,7 @@ class MinimaxEngine:
         self.max_time = max_time
         self.evaluator = None
         self.nodes_searched = 0
-        
+
         if use_nn and model_path is not None:
             try:
                 self.evaluator = ChessEvaluator(
@@ -129,8 +127,6 @@ class MinimaxEngine:
                 print(f"Failed to load neural network model: {e}")
 
         self.book_path = BOOK_FILENAME
-
-
 
     def material_score(self, board):
         """
@@ -150,7 +146,6 @@ class MinimaxEngine:
             # subtract the value of each black piece
             score -= PIECE_VALUES[piece_type] * len(board.pieces(piece_type, chess.BLACK))
         return score
-
 
     def better_eval_func(self, board):
         if board.is_checkmate():
@@ -181,10 +176,10 @@ class MinimaxEngine:
                 # simple safety: penalize missing pawn shield
                 for f in [chess.square_file(king_sq)-1, chess.square_file(king_sq), chess.square_file(king_sq)+1]:
                     if 0 <= f <= 7:
-                        r = 1 if color==chess.WHITE else 6
+                        r = 1 if color == chess.WHITE else 6
                         sq = chess.square(f, r)
                         p = board.piece_at(sq)
-                        if not (p and p.piece_type == chess.PAWN and p.color==color):
+                        if not (p and p.piece_type == chess.PAWN and p.color == color):
                             score -= factor * 10
 
         # Pawn structure
@@ -194,9 +189,9 @@ class MinimaxEngine:
             for sq in pawns:
                 file = chess.square_file(sq)
                 # isolated pawns
-                left = board.pieces(chess.PAWN, color) & chess.BB_FILES[file-1] if file>0 else 0
-                right = board.pieces(chess.PAWN, color) & chess.BB_FILES[file+1] if file<7 else 0
-                if left==0 and right==0:
+                left = board.pieces(chess.PAWN, color) & chess.BB_FILES[file-1] if file > 0 else 0
+                right = board.pieces(chess.PAWN, color) & chess.BB_FILES[file+1] if file < 7 else 0
+                if left == 0 and right == 0:
                     score -= factor * 15
 
         # Center control
@@ -212,7 +207,7 @@ class MinimaxEngine:
                     elif p.piece_type == chess.PAWN:
                         score += factor * 5
 
-        return score        
+        return score
 
     def evaluate_board(self, board):
         """
@@ -245,7 +240,7 @@ class MinimaxEngine:
             return int(eval_score * 1000)
 
         # if were not using NN, use material score
-        #score = self.material_score(board)
+        # score = self.material_score(board)
         score = self.better_eval_func(board)
 
         return score
@@ -336,9 +331,6 @@ class MinimaxEngine:
         except Exception as e:
             print("Polyglot book read error:", e)
         return None
-
-
-
 
     def get_move(self, fen, time_limit=None, max_depth=3):
         """
