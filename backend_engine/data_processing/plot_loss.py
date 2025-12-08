@@ -35,6 +35,7 @@ def plot_loss(log_file='../ml/models/session_policy_head/training_log.csv'):
     plt.title('Training and Validation Loss Over Epochs')
     plt.legend()
     plt.grid(True)
+    plt.savefig('loss_plot_policy_net.png')
     plt.show()
 
 
