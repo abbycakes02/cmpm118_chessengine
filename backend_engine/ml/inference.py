@@ -1,8 +1,9 @@
 import torch
+import torch.nn.functional as F
 import os
 
-from .model import ChessValueNet
-from data_processing.tensor_converter import fen_to_tensor
+from ml.model import ChessNet
+from ml.game_state import GameHistory
 
 
 class ChessEvaluator():
@@ -10,7 +11,7 @@ class ChessEvaluator():
     class to load a trained ChessValueNet model and use it to evaluate chess positions
     """
 
-    def __init__(self, model_path, channels, blocks):
+    def __init__(self, model_path, input_channels, hidden_channels, blocks, history_length=5):
         """
         wrap the ChessValueNet model to make it easy to access
 
@@ -22,8 +23,12 @@ class ChessEvaluator():
         self.model_path = model_path
         if not os.path.exists(self.model_path):
             raise FileNotFoundError(f"Model file not found: {model_path}")
-        self.channels = channels
+
+        self.input_channels = input_channels
+        self.hidden_channels = hidden_channels
         self.blocks = blocks
+        self.history_length = history_length
+        self.history = GameHistory(history_length=history_length)
 
         if torch.cuda.is_available():
             self.device = torch.device("cuda")
@@ -33,11 +38,14 @@ class ChessEvaluator():
             self.device = torch.device("cpu")
 
         print(f"Loading model on device: {self.device}")
-        print(f" Channels: {self.channels}, Residual Blocks: {self.blocks}")
+        print(f" Channels: {self.hidden_channels}, Residual Blocks: {self.blocks}")
 
-        self.model = ChessValueNet(
-            num_channels=self.channels,
-            num_residual_blocks=self.blocks
+        self.model = ChessNet(
+            vocab_size=4544,
+            history_length=self.history_length,
+            board_channels=self.input_channels,
+            hidden_channels=self.hidden_channels,
+            num_blocks=self.blocks
             ).to(self.device)
 
         weights = torch.load(self.model_path, map_location=self.device)
@@ -51,7 +59,7 @@ class ChessEvaluator():
     def __call__(self, board):
         return self.evaluate_position(board)
 
-    def evaluate_position(self, board):
+    def evaluate_position(self, fen_str):
         """
         evaluate a chess position given in FEN notation
 
@@ -61,15 +69,31 @@ class ChessEvaluator():
         Returns:
             float: evaluation score between -1 (black win) and 1 (white win)
         """
-        # unpack board to fen and then to tensor
-        fen_str = board.fen()
-        tensor = fen_to_tensor(fen_str)
+        self.history.push(fen_str)
 
-        # add batch dimension and move to device
-        tensor = tensor.unsqueeze(0).to(self.device)
+        tensor = self.history.get_history()
+
+        # convert to torch tensor and add batch dimension
+        tensor = torch.from_numpy(tensor).float().unsqueeze(0).to(self.device)
 
         with torch.no_grad():
-            prediction = self.model(tensor)
-            score = prediction.item()  # get scalar value
+            policy_logits, score = self.model(tensor)
+            policy_probs = F.softmax(policy_logits, dim=1).squeeze(0)
+            policy_probs = policy_probs.cpu().numpy()
+            score = score.item()
+
+            return policy_probs, score
 
         return score
+
+    def reset_history(self):
+        """
+        clears the game history
+        """
+        self.history.clear()
+
+    def pop_history(self):
+        """
+        pops the most recent board state from the history
+        """
+        self.history.pop()

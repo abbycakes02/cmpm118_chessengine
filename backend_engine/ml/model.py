@@ -1,39 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from collections import deque
-import numpy as np
-
-
-class GameHistory():
-    """
-    uses a deque to store the history of game states for training purposes
-    deque is faster than list concatenation for appending and popping from both ends
-    """
-    def __init__(self, history_length=5, board_shape=(12, 8, 8)):
-        self.max_length = history_length
-        self.shape = board_shape
-        # pre-fill the deque with empty board states
-        init = [np.zeros(board_shape, dtype=np.float32) for _ in range(self.max_length)]
-        self.history = deque(init, maxlen=self.max_length)
-
-    def push(self, board_tensor):
-        """
-        pushes a new board state onto the history deque
-
-        Args:
-            board_tensor (numpy.ndarray): tensor representing the board state
-        """
-        self.history.append(board_tensor)
-
-    def get_history(self):
-        """
-        returns the current history as a single tensor
-
-        Returns:
-            torch.Tensor: tensor of shape (history_length, 12, 8, 8)
-        """
-        return np.concatenate(self.history, axis=0)
 
 
 class ResidualBlock(nn.Module):
@@ -83,7 +50,7 @@ class ResidualBlock(nn.Module):
         return output_tensor
 
 
-class ChessValueNet(nn.Module):
+class ChessNet(nn.Module):
     """
     Main Value Net Powering the chess engine
     the net takes the board state represented as a tensor
@@ -91,41 +58,72 @@ class ChessValueNet(nn.Module):
     "probability of a white win" or the strength of the position
     """
 
-    def __init__(self, num_channels=64, num_residual_blocks=5):
-        super(ChessValueNet, self).__init__()
+    def __init__(self, vocab_size, history_length=5, board_channels=12, hidden_channels=64, num_blocks=5):
+        """
+        initializes the Chess Value Network
 
-        # first pass the input tensor through a conv layer to deepen the representation
+        Args:
+            history_length (int): number of past board states to include in the input
+            in_channels (int): number of input channels per board state
+            hidden_channels (int): number of channels in the hidden layers
+            num_blocks (int): number of residual blocks in the network
+        """
+        super(ChessNet, self).__init__()
+
+        # input size scales with history length
+        self.input_channels = history_length * board_channels
+
+        # first pass the input tensor through a conv layer
+        # extracts features from the input tensor and maps to
+        # a higher dimensional representation space
         self.conv = nn.Conv2d(
-            in_channels=20,
-            out_channels=num_channels,
+            in_channels=self.input_channels,
+            out_channels=hidden_channels,
             kernel_size=3,
             padding=1,
             bias=False
             )
-        self.bn = nn.BatchNorm2d(num_channels)
+        self.bn = nn.BatchNorm2d(hidden_channels)
 
         # create residual blocks
+        # residual blocks act as the brain, extracting deep features
+        # from the board representation and learning complex patterns
         self.residual_blocks = nn.ModuleList(
-            [ResidualBlock(num_channels) for _ in range(num_residual_blocks)]
+            [ResidualBlock(hidden_channels) for _ in range(num_blocks)]
         )
 
-        # then flatten and pass through a linear layer to get a single scalar output
-        # pass it through a 1x1 conv to flatten channels to 1
-        self.conv_final = nn.Conv2d(
-            in_channels=num_channels,
+        # take the output of the residual blocks and pass it through the policy head
+        # similar to alpha zero, 2 channels keeps some spatial structure
+        self.policy_conv = nn.Conv2d(
+            in_channels=hidden_channels,
+            out_channels=2,
+            kernel_size=1,
+            padding=0,
+            bias=False
+        )
+        self.policy_bn = nn.BatchNorm2d(2)
+        # policy head fully connected layer to output move probabilities
+        fc_size = 2 * 8 * 8  # 2 channels, 8x8 board
+        self.policy_fc = nn.Linear(fc_size, vocab_size)
+
+        # then pass through the value head to get win probability
+        # final conv layer to reduce channels to 1 to extract a single value map
+        self.value_conv = nn.Conv2d(
+            in_channels=hidden_channels,
             out_channels=1,
             kernel_size=1,
             bias=False
         )
         # conv_final: (batch_size, 1, 8, 8)
-        self.bn_final = nn.BatchNorm2d(1)
+        self.value_bn = nn.BatchNorm2d(1)
 
         # and pass to two fully conneced linear layers to get final prediction
-        # 1 x 8 x 8  ->  64
-        # the expand to 128 neruons for a better representation
+        # by squishing the represenation down to 64 neurons before prediction
+        # the model is forced to learn a smart representation as opposed to memorizing
+        # the expand to 256 neurons to allow the model a better representation for score
         # then finally squash back down to a scalar output
-        self.fc1 = nn.Linear(64, 128)
-        self.fc2 = nn.Linear(128, 1)
+        self.fc1 = nn.Linear(64, 256)
+        self.fc2 = nn.Linear(256, 1)
 
         # init weights
         self._init_weights()
@@ -174,22 +172,30 @@ class ChessValueNet(nn.Module):
         for block in self.residual_blocks:
             x = block(x)
 
+        # policy head
+        p = self.policy_conv(x)
+        p = self.policy_bn(p)
+        p = F.relu(p)
+        # flatten for fully connected layer
+        p = p.view(p.size(0), -1)
+        policy_logits = self.policy_fc(p)
+
         # final conv layer to reduce channels to 1 to extract a single value map
         # (batch_size, num_channels, 8, 8) -> (batch_size, 1, 8, 8)
-        x = self.conv_final(x)
-        x = self.bn_final(x)
-        x = F.relu(x)
+        v = self.value_conv(x)
+        v = self.value_bn(v)
+        v = F.relu(v)
 
         # flatten the 1x8x8 to 64
         # (batch_size, 1, 8, 8) -> (batch_size, 64)
-        x = x.view(x.size(0), -1)
+        v = v.view(v.size(0), -1)
 
         # pass through fully connected layers to get final scalar output
         # (batch_size, 64) -> (batch_size, 128) -> (batch_size, 1)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.fc2(x)
+        v = self.fc1(v)
+        v = F.relu(v)
+        value = self.fc2(v)
         # scale output to win probability between -1 and 1 using tanh
-        win_probs = torch.tanh(x)
+        win_probs = torch.tanh(value)
 
-        return win_probs
+        return policy_logits, win_probs

@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
+import numpy as np
 import glob
 import sys
 import os
@@ -8,6 +9,7 @@ import gc
 import time
 
 from backend_engine.data_processing.tensor_converter import fen_to_tensor
+from backend_engine.ml.vocab import MOVE_TO_INT
 
 
 class ChessDataset(Dataset):
@@ -19,9 +21,17 @@ class ChessDataset(Dataset):
 
     https://docs.pytorch.org/tutorials/beginner/basics/data_tutorial.html
     """
-    def __init__(self, data_frame):
-        """Load data from a pandas DataFrame"""
+    def __init__(self, data_frame, history_length=5):
+        """Load data from a pandas DataFrame, and set history length"""
         self.data = data_frame
+        self.history_length = history_length
+
+        # pre-convert to numpy array for faster access
+        self.fens = self.data["fen"].to_numpy()
+        self.results = self.data["result"].to_numpy()
+        self.game_nums = self.data["game_num"].to_numpy()
+        self.is_black = self.data["is_black"].to_numpy()
+        self.moves = self.data["move_uci"].to_numpy()
 
     def __len__(self):
         """Return the number of samples in the dataset"""
@@ -29,26 +39,44 @@ class ChessDataset(Dataset):
 
     def __getitem__(self, idx):
         """Return the tensor and result for the given index"""
-        row = self.data.iloc[idx]
-        fen_str = row["fen"]
-        result = row["result"]
+        result = self.results[idx]
+        game_num = self.game_nums[idx]
+        is_black = self.is_black[idx]
+        move_str = self.moves[idx]
 
-        turn = fen_str.split()[1]
-        if turn == 'b':
+        # convert move to integer index
+        try:
+            move_idx = MOVE_TO_INT[move_str]
+        except KeyError:
+            move_idx = 0
+
+        if is_black == 1:
             # if its black to move, flip the result
             result = -result
 
-        tensor = fen_to_tensor(fen_str)
-        # tensor: (20, 8, 8)
+        # create the result tensors for value and policy heads
+        value_result = torch.tensor([result], dtype=torch.float32)
+        policy_result = torch.tensor(move_idx, dtype=torch.long)
 
-        # result is currently just a scalar, but the model expects a tensor
-        result = torch.tensor([result], dtype=torch.float32)
-        # result: (1,)
+        # grab an appropriate amount of board states from the FEN string
+        boards = []
+        for i in range(self.history_length):
+            # look back i moves
+            curr_idx = idx - i
+            if curr_idx < 0 or self.game_nums[curr_idx] != game_num:
+                # out of bounds or different game, pad with empty board
+                boards.append(np.zeros((20, 8, 8), dtype=np.float32))
+            else:
+                fen = self.fens[curr_idx]
+                boards.append(fen_to_tensor(fen))
 
-        return tensor, result
+        tensor = np.concatenate(boards, axis=0)
+        tensor = torch.from_numpy(tensor).float()
+
+        return tensor, value_result, policy_result
 
 
-def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False):
+def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False, history_length=5):
     """
     Generator that yields pytorch DataLoader objects for each chunk of data in
     a list of files. Using the pytorch DataLoader class allows us to take advantage of
@@ -73,7 +101,7 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False)
             df = pd.read_parquet(file_path)
 
             # Create a ChessDataset from the DataFrame
-            dataset = ChessDataset(df)
+            dataset = ChessDataset(df, history_length=history_length)
 
             # Create a DataLoader for the dataset
             # pin_memory speeds up transfer to GPU
@@ -101,7 +129,7 @@ def chunk_loader(parquet_files, batch_size=512, num_workers=4, pin_memory=False)
             continue
 
 
-def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_workers=4, pin_memory=False):
+def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_workers=4, pin_memory=False, history_length=5):
     """
     splits the parquet files in data_dir into training and validation sets,
     then returns DataLoader objects for each set.
@@ -134,7 +162,7 @@ def get_train_test_loaders(data_dir, batch_size=512, validation_split=0.1, num_w
     print(f'Using {len(train_files)} files for training and {len(test_files)} files for validation.')
 
     # Create DataLoaders for training and validation sets
-    train_loader = chunk_loader(train_files, batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory)
-    test_loader = chunk_loader(test_files, batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory)
+    train_loader = chunk_loader(train_files, batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory, history_length=history_length)
+    test_loader = chunk_loader(test_files, batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory, history_length=history_length)
 
     return train_loader, test_loader, len(train_files), len(test_files)
