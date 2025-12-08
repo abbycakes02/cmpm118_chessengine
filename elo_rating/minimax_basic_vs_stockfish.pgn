@@ -1,0 +1,150 @@
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 e6 2. Ne2 Be7 3. Nbc3 Nf6 4. e5 Ng4 5. Nd4 Nxe5 6. f4 Nbc6 7. Nxc6 Bh4+ 8. g3 Nxc6 9. gxh4 Qxh4+ 10. Ke2 Nd4+ 11. Ke3 c5 12. Ne4 d6 13. Nxd6+ Ke7 14. Ne4 Nf5+ 15. Kd3 Nd4 16. Ke3 e5 17. fxe5 Bg4 18. Be2 Nxe2 19. Nxc5 Qh3+ 20. Kf2 Qf3+ 21. Ke1 Qxh1+ 22. Kf2 Qxh2+ 23. Ke3 Qg3+ 24. Ke4 Qf3# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Black "MinimaxEngine"]
+[Result "0-1"]
+
+1. c3 Nf6 2. c4 Nc6 3. d4 e5 4. e3 exd4 5. exd4 Bb4+ 6. Nc3 Bxc3+ 7. bxc3 O-O 8. Nf3 d5 9. Be3 Bg4 10. Rc1 Ne4 11. h3 Bh5 12. Be2 dxc4 13. O-O Qd5 14. Bf4 Rfc8 15. a4 Qf5 16. Bh2 Qd5 17. g4 Bg6 18. Re1 Nf6 19. Nh4 Qg5 20. Ng2 Be4 21. f3 Bg6 22. h4 Qa5 23. Ne3 Bd3 24. Nxc4 Bxe2 25. Rxe2 Qd5 26. Qf1 Nxg4 27. Ne3 Nxh2 28. Nxd5 Nxf1 29. Rg2 Rd8 30. Nb4 Nxb4 31. Rg5 Nd2 32. Kg2 Nd3 33. Rf1 Nf4+ 34. Kh2 Nxf1+ 35. Kg1 Nd2 36. a5 Nxf3+ 37. Kf2 Nxg5 38. c4 Nge6 39. a6 bxa6 40. Ke1 Rxd4 41. Kf2 Rxc4 42. Kg3 Rc2 43. h5 Nxh5+ 44. Kg4 Nhf4 45. Kh4 Nd4 46. Kg3 g5 47. Kg4 Rg2# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 d5 2. Nc3 Nf6 3. exd5 Nxd5 4. Bb5+ Nc6 5. Bxc6+ bxc6 6. Nge2 Bb7 7. O-O e6 8. d4 Qh4 9. f4 Nb6 10. Qd3 O-O-O 11. Qe4 Be7 12. Be3 g6 13. Qe5 Nc4 14. Qe4 Qf6 15. Bc1 c5 16. Qd3 Rxd4 17. Nxd4 Qxd4+ 18. Qxd4 cxd4 19. Nb5 Bc5 20. b4 Bxb4 21. c3 dxc3 22. Nxa7+ Kd8 23. Rd1+ Ke8 24. Nb5 Ke7 25. g3 c2 26. Rd3 Bc5+ 27. Kf1 c6 28. Rc3 cxb5 29. Rxc2 Ba6 30. g4 Bd4 31. Rb1 h5 32. g5 Rd8 33. Bd2 Ke8 34. Bc1 Be3 35. Rxc4 bxc4 36. Bxe3 e5 37. fxe5 c3+ 38. Kg1 c2 39. Rb2 c1=Q+ 40. Bxc1 Rd1+ 41. Kg2 Rxc1 42. Rb8+ Bc8 43. Ra8 Kd7 44. Ra7+ Ke6 45. h4 Rc3 46. a3 Kxe5 47. Rxf7 Rxa3 48. Rg7 Ra2+ 49. Kh1 Ra1+ 50. Kh2 Ra2+ 51. Kh1 Ra6 52. Re7+ Kf4 53. Rf7+ Bf5 54. Rf6 Ra1+ 55. Kg2 Ra2+ 56. Kf1 Kf3 57. Ke1 Ra4 58. Kd2 Rf4 59. Kc3 Re4 60. Kb2 Kg2 61. Rf7 Kg3 62. Rg7 Kxh4 63. Ka2 Kxg5 64. Rh7 Ra4+ 65. Kb3 Re4 66. Kb2 Kh4 67. Rf7 Be6 68. Rg7 Rg4 69. Rh7 Bd5 70. Rd7 Bf3 71. Rd8 Re4 72. Rg8 Rg4 73. Rd8 Bc6 74. Rd6 Rg2+ 75. Ka1 Rg4 76. Rxc6 Rg1+ 77. Ka2 g5 78. Rc2 Kh3 79. Rc5 Kh4 80. Rc8 Rf1 81. Rc2 Kg3 82. Rc7 g4 83. Rc5 h4 84. Rc4 Rf3 85. Rc1 Rf2+ 86. Kb1 Kg2 87. Rc4 Kh3 88. Rc1 g3 89. Rc3 Rf1+ 90. Kb2 Rf7 91. Re3 Kh2 92. Re4 Kh3 93. Re3 Kh2 94. Re4 g2 95. Re2 Rh7 96. Ka1 Rf7 97. Rxg2+ Kxg2 98. Ka2 Rd7 99. Kb1 Kg3 100. Kb2 Rc7 101. Ka2 Ra7+ 102. Kb3 Re7 103. Kc4 h3 104. Kb4 h2 105. Kc3 h1=Q 106. Kb2 Qc6 107. Ka2 Qf3 108. Kb2 Re2+ 109. Kc1 Qh1# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Black "MinimaxEngine"]
+[Result "1-0"]
+
+1. e4 Nc6 2. Nf3 Nf6 3. Nc3 e6 4. Be2 Bb4 5. O-O Bxc3 6. bxc3 Nxe4 7. Re1 Ng5 8. Bf1 Nxf3+ 9. Qxf3 Qg5 10. d3 Qe7 11. Qg3 Kd8 12. c4 Qb4 13. Qxg7 Re8 14. Bg5+ Ne7 15. Qxf7 Qc5 16. Bh4 Rh8 17. Qf6 Rg8 18. Qf7 Re8 19. g3 d5 20. Bf6 dxc4 21. dxc4 Bd7 22. Rad1 Kc8 23. Rxe6 Qf5 24. Rxd7 Kxd7 25. Re5 Qf3 26. Rxe7+ Rxe7 27. Qxe7+ Kc6 28. Bg2 Qxg2+ 29. Kxg2 h6 30. a4 Rb8 31. Kh3 b6 32. Kg4 Rg8+ 33. Kf5 Kb7 34. Qf7 Rc8 35. h4 a6 36. Be5 Kb8 37. g4 Kb7 38. Kg6 Ka8 39. h5 Kb7 40. c5 bxc5 41. f3 Ka8 42. a5 Rd8 43. f4 Rc8 44. f5 Rd8 45. f6 Rh8 46. c4 Rc8 47. Bf4 Rd8 48. Bxc7 Rd4 49. Qe8+ Kb7 50. Qb8+ Kc6 51. Qe8+ Kxc7 52. Qe6 Rd6 53. Qe7+ Rd7 54. Qe4 Rd4 55. Qf5 Kb8 56. Qe6 Ka8 57. Qc8+ Ka7 58. Qxc5+ Kb8 59. Qb6+ Kc8 60. Qc6+ Kd8 61. Qb6+ Kd7 62. Qxd4+ Kc7 63. f7 Kc6 64. Qd2 Kc7 65. Qd3 Kc8 66. Qd6 Kb7 67. Qb6+ Kc8 68. f8=Q+ Kd7 69. Qfd8# 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "1-0"]
+
+1. e4 c6 2. Nf3 d5 3. Ne5 dxe4 4. Bc4 Be6 5. Bxe6 fxe6 6. Nc3 Nd7 7. Qh5+ g6 8. Nxc6 bxc6 9. Qg4 e5 10. Nxe4 Ndf6 11. Nxf6+ Nxf6 12. Qe6 Qd7 13. Qxe5 Qd6 14. Qxd6 exd6 15. O-O Nd5 16. d4 Be7 17. Re1 O-O 18. c4 Nb4 19. Rxe7 Rae8 20. Rxe8 Rxe8 21. Bf4 Nd3 22. Bxd6 Re6 23. Ba3 Re2 24. f3 Nf4 25. g4 Rc2 26. Bc5 Rxb2 27. Bxa7 Kf7 28. Bc5 Nh3+ 29. Kf1 Rf2+ 30. Ke1 Rg2 31. Rd1 Rxa2 32. Rb1 Ng1 33. Rb7+ Ke8 34. Rb8+ Kd7 35. Rf8 Nh3 36. Rf7+ Ke6 37. Re7+ Kf6 38. Rxh7 Nf4 39. Bd6 Nd3+ 40. Kf1 Ke6 41. Bg3 Nc1 42. Rg7 Ra3 43. Be5 Rxf3+ 44. Kg2 Rc3 45. Rxg6+ Kd7 46. Rd6+ Ke7 47. Rxc6 Nb3 48. c5 Rc4 49. Bd6+ Ke6 50. Bg3+ Kd7 51. Rd6+ Ke8 52. Be5 Kf7 53. Rd7+ Ke6 54. Rd8 Ke7 55. Rc8 Nxd4 56. Bxd4 Rb4 57. Rc7+ Ke6 58. Rc6+ Kd5 59. Rd6+ Ke4 60. Bf6 Rb1 61. c6 Rb5 62. c7 Rc5 63. Rd7 Ra5 64. c8=Q Ra1 65. Qe8+ Kf4 66. Rd4# 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 c6 2. Nf3 e6 3. e5 c5 4. Bb5 Be7 5. O-O Nh6 6. d4 Nf5 7. dxc5 Nc6 8. Bxc6 bxc6 9. b4 f6 10. Nc3 a5 11. Nd4 O-O 12. Nxf5 exf5 13. Qd4 Ba6 14. b5 Bb7 15. Qc4+ Kh8 16. Be3 fxe5 17. g3 Qe8 18. a4 f4 19. Bd2 Qc8 20. gxf4 cxb5 21. axb5 Bxc5 22. Qd3 d6 23. Rfe1 Rf6 24. f5 Qxf5 25. Qxf5 Rxf5 26. Nd1 Rf6 27. Bc3 Bb6 28. Bd2 Kg8 29. Bc3 Rh6 30. Nb2 Rf8 31. Nd3 e4 32. Bxa5 Rg6+ 33. Kf1 exd3 34. Bxb6 Bg2+ 35. Kg1 Be4+ 36. Kf1 Bg2+ 37. Kg1 Bh3+ 38. Kh1 Rb8 39. Bc7 Bg2+ 40. Kg1 Bh3+ 41. Kh1 Bg2+ 42. Kg1 Bc6+ 43. Kf1 Bxb5 44. Bxb8 d2+ 45. Re2 Re6 46. Bc7 Rxe2 47. Kg2 Bc6+ 48. Kf1 Bb5 49. Kg2 Bc6+ 50. Kf1 Re1+ 51. Rxe1 Bb5+ 52. Re2 d1=Q+ 53. Kg2 Qxe2 54. Bxd6 Qg4+ 55. Bg3 Bc6+ 56. f3 Qxf3+ 57. Kh3 Bd7+ 58. Kh4 Qf6+ 59. Kh5 Qg6+ 60. Kh4 Qe4+ 61. Kh5 Qg4# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Black "MinimaxEngine"]
+[Result "1-0"]
+
+1. e4 Nc6 2. Nc3 Nd4 3. Nf3 Nxf3+ 4. gxf3 Nf6 5. d4 d6 6. h4 Be6 7. Bg5 Ng8 8. d5 Bd7 9. Qd2 h6 10. Bf4 e6 11. dxe6 Bxe6 12. Bg3 a6 13. f4 Ne7 14. h5 Nc6 15. Qe3 Qf6 16. O-O-O O-O-O 17. Bh4 g5 18. hxg6 Qxg6 19. f5 Qg7 20. Kb1 Bxa2+ 21. Kc1 Be7 22. Bxe7 Nxe7 23. Nxa2 Nc6 24. Be2 Qg2 25. Rdg1 Qxh1 26. Rxh1 Ne7 27. Kb1 d5 28. Nc1 d4 29. Qb3 Rh7 30. Nd3 Kb8 31. f6 Nc8 32. Ka1 b5 33. Bh5 Rd6 34. e5 Rc6 35. Qd5 Rxc2 36. Bxf7 c6 37. Qb3 Re2 38. Bg8 Rd7 39. f7 Rxf7 40. Qxf7 Nb6 41. Nc5 Kc8 42. Qb7+ Kd8 43. Ne6+ Ke8 44. Qb8+ Ke7 45. Qf8+ Kd7 46. Qd8# 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 d5 2. Nc3 dxe4 3. Nxe4 Nc6 4. Bb5 e5 5. Nf3 Bd7 6. O-O Be7 7. d3 Nf6 8. Nxf6+ gxf6 9. Bh6 Nb4 10. Bg7 Bxb5 11. Bxh8 Qd7 12. a3 Nxd3 13. cxd3 Bc6 14. Nh4 a6 15. Bg7 a5 16. Qe2 O-O-O 17. Bh6 f5 18. Nf3 Rg8 19. Nxe5 Bxg2 20. Nxd7 Be4+ 21. Bg7 Rxg7+ 22. Qg4 Rxg4# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Black "MinimaxEngine"]
+[Result "1-0"]
+
+1. c4 e5 2. Nc3 Bb4 3. Nf3 Bxc3 4. bxc3 e4 5. d4 exf3 6. gxf3 Nc6 7. d5 Qf6 8. dxc6 dxc6 9. Qb3 Ne7 10. a4 O-O 11. Bd2 c5 12. Qc2 Qg6 13. Qe4 Qxe4 14. fxe4 Be6 15. h4 Bxc4 16. Bf4 f5 17. Bxc7 Rfe8 18. Bd6 fxe4 19. Bxc5 Nd5 20. h5 e3 21. Bd4 exf2+ 22. Kd2 Nf6 23. Rh4 Rad8 24. Rf4 Nxh5 25. Rg4 Nf6 26. Rg2 Ne4+ 27. Kc2 Rxd4 28. cxd4 Rc8 29. a5 Bxe2+ 30. Kb2 Rc4 31. d5 Rb4+ 32. Ka3 Bxf1 33. Rxf2 Nxf2 34. Kxb4 Bg2 35. Kc4 Ne4 36. Ra2 Nd6+ 37. Kd4 Bf3 38. a6 b6 39. Rc2 Nf5+ 40. Ke5 Bg4 41. d6 Nh4 42. Kf4 Be6 43. Rc7 Ng6+ 44. Kg3 Kf8 45. Rb7 h5 46. Kh2 Ne5 47. Re7 Nf3+ 48. Kg3 Bd5 49. Kf4 Nd4 50. Rxa7 Bc6 51. Rc7 Ne6+ 52. Ke3 Nxc7 53. dxc7 Ke7 54. c8=Q Bd7 55. Qb7 Kd6 56. Qb8+ Ke7 57. Qc7 Ke6 58. a7 b5 59. a8=Q Ke7 60. Qe4+ Kf8 61. Qd8+ Kf7 62. Qde7+ Kg8 63. Qg6 Kh8 64. Qexg7# 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 d5 2. Bd3 Nc6 3. Nc3 Nf6 4. exd5 Nd4 5. Bb5+ c6 6. dxc6 Nxc6 7. Nf3 Bd7 8. O-O a6 9. Bxc6 Bxc6 10. Ne5 Qc8 11. f3 h6 12. d4 b5 13. Ne4 e6 14. Nxf6+ gxf6 15. Nxc6 Qxc6 16. Qd3 Bg7 17. Qe4 Kd7 18. Qxc6+ Kxc6 19. a4 Kd5 20. axb5 axb5 21. Rxa8 Rxa8 22. Be3 b4 23. Bd2 f5 24. Be3 Rc8 25. Rf2 Rc7 26. g4 Rc4 27. gxf5 exf5 28. Rg2 Bh8 29. Rf2 Bg7 30. Rd2 h5 31. Rg2 f4 32. Rxg7 fxe3 33. Rxf7 Rxc2 34. Rd7+ Kc4 35. Rc7+ Kd3 36. Rxc2 Kxc2 37. Kf1 Kd1 38. Kg2 e2 39. f4 Kc2 40. Kf2 Kd1 41. Kg2 e1=Q 42. d5 Qd2+ 43. Kg1 b3 44. f5 Ke2 45. Kg2 Ke3+ 46. Kh3 Qe2 47. Kh4 Qg4# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 d6 2. Nf3 e5 3. Bb5+ Bd7 4. Bxd7+ Qxd7 5. Qe2 Nf6 6. d4 exd4 7. Bg5 Qe6 8. Nxd4 Qe5 9. Bxf6 Qxf6 10. Nb5 Kd8 11. Qc4 Na6 12. Qc3 Qg5 13. Nxc7 Qxg2 14. Nxa8 Qxh1+ 15. Kd2 Qxh2 16. Qa5+ Ke8 17. Qb5+ Kd8 18. Qa5+ Kd7 19. Qb5+ Kd8 20. Qa5+ Kc8 21. Qf5+ Kb8 22. Qxf7 Be7 23. Qxe7 Qxf2+ 24. Kc3 Qe3+ 25. Kc4 Rc8+ 26. Kd5 Nb4+ 27. Kxd6 Qh6+ 28. Ke5 Nc6+ 29. Kf5 Qg6+ 30. Kf4 Nxe7 31. Kf3 Qh6 32. Nc3 Rf8+ 33. Kg2 Qd2+ 34. Kh1 Rf2 35. Nc7 Qh6+ 36. Kg1 Qh2# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Black "MinimaxEngine"]
+[Result "1-0"]
+
+1. d3 Nf6 2. h3 Nc6 3. e4 e5 4. Nd2 Bb4 5. a3 Bxd2+ 6. Qxd2 Nd4 7. Nf3 Nxf3+ 8. gxf3 h6 9. Rg1 g5 10. Qc3 d6 11. Be3 O-O 12. O-O-O Be6 13. h4 Re8 14. d4 Qe7 15. dxe5 Nh5 16. exd6 cxd6 17. Qb4 Red8 18. Bd3 Nf6 19. Qd4 Ne8 20. Qc3 Rdc8 21. Qb4 a5 22. Qd4 a4 23. Kb1 Rcb8 24. hxg5 h5 25. Rh1 Ng7 26. Ka1 Bd7 27. Qf6 Re8 28. Rhg1 Rac8 29. Qh6 Ne6 30. Rc1 h4 31. Rcd1 Bc6 32. g6 f5 33. g7 Kf7 34. Qh7 Nxg7 35. Rxg7+ Kf6 36. Qh6+ Ke5 37. f4# 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 c5 2. Nf3 e6 3. Ne5 Nf6 4. Nc3 Be7 5. Ng4 O-O 6. Bd3 Nc6 7. O-O Nxg4 8. Qxg4 d5 9. exd5 exd5 10. Qh5 f5 11. Bb5 Rf6 12. Bxc6 bxc6 13. Qf3 Bd7 14. Nxd5 cxd5 15. Qxd5+ Kh8 16. d4 f4 17. dxc5 Qc8 18. Kh1 Bc6 19. Qe5 Bxg2+ 20. Kxg2 Qg4+ 21. Kh1 Qf3+ 22. Kg1 Qg4+ 23. Kh1 Qf3+ 24. Kg1 Rg6+ 25. Qg5 Rxg5# 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Black "MinimaxEngine"]
+[Result "1-0"]
+
+1. c4 e5 2. a3 Nc6 3. b4 Nf6 4. h3 a5 5. b5 Na7 6. e3 d6 7. Nc3 Be7 8. Nf3 O-O 9. Be2 c6 10. a4 e4 11. Nd4 c5 12. Nc2 Be6 13. d4 exd3 14. Qxd3 Nc8 15. e4 Nd7 16. Ne3 Ne5 17. Qd1 Bg5 18. Ncd5 Bxd5 19. Nxd5 Bxc1 20. Qxc1 Nb6 21. Ne3 Ned7 22. Bd3 Qf6 23. Ra3 Ne5 24. Qc2 Rfe8 25. O-O Qe6 26. Be2 Ng6 27. Bf3 Ne5 28. Be2 Ng6 29. f3 Nf4 30. Re1 Rad8 31. Bf1 Qg6 32. Kh1 Qf6 33. Qd2 Nh5 34. Kh2 Qe5+ 35. Kg1 Ra8 36. Rd3 Ng3 37. Rxd6 Nxf1 38. Kxf1 Nxa4 39. Nf5 Qh2 40. Kf2 g6 41. Nh6+ Kg7 42. Rd7 Rf8 43. Ng4 Qb8 44. Qh6+ Kh8 45. Nf6 Qg3+ 46. Kxg3 Nc3 47. Kh2 Nxb5 48. Rh1 Rg8 49. Rd8 Rgxd8 50. Re1 Rg8 51. Qxh7# 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "MinimaxEngine"]
+[Black "Stockfish-LOption(name='Skill Level', type='spin', default=20, min=0, max=20, var=[])"]
+[Result "0-1"]
+
+1. e4 Nc6 2. Bb5 d5 3. Bxc6+ bxc6 4. Nc3 Nf6 5. d3 e5 6. exd5 Nxd5 7. Bd2 a5 8. Nf3 Bd6 9. O-O Bg4 10. Nxd5 Bxf3 11. Qxf3 cxd5 12. Qxd5 Qb8 13. Qb3 O-O 14. Qd5 c6 15. Qb3 a4 16. Qxb8 Raxb8 17. Bc3 f6 18. d4 Rb5 19. Rfe1 Bb4 20. Bxb4 Rxb4 21. Rab1 Rxd4 22. Re2 Rfd8 23. f4 Rxf4 24. a3 Rd5 25. Rc1 h5 26. Kh1 h4 27. Kg1 Kf7 28. c4 Rd3 29. c5 Ke6 30. Kh1 g6 31. Kg1 f5 32. Rce1 Rd5 33. Rf1 g5 34. Rxf4 gxf4 35. Rc2 Rd8 36. Rf2 Rd5 37. Rf3 Rxc5 38. Rc3 Rxc3 39. bxc3 Kd5 40. Kh1 e4 41. Kg1 Kc5 42. Kf2 Kd6 43. Kf1 Kc5 44. Kf2 Kd5 45. Kg1 Kc4 46. Kf2 c5 47. g3 fxg3+ 48. hxg3 h3 49. g4 fxg4 50. Kg3 Kxc3 51. Kh2 e3 52. Kg3 Kc4 53. Kxg4 e2 54. Kxh3 Kd3 55. Kg3 Kc2 56. Kf2 Kd1 57. Kg1 e1=Q+ 58. Kg2 Kd2 59. Kh2 Qh4+ 60. Kg1 Ke2 61. Kg2 Qh5 62. Kg3 Qg5+ 63. Kh3 c4 64. Kh2 Kf2 65. Kh3 Kf1 66. Kh2 Qg2# 0-1
+
